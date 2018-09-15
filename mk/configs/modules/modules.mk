@@ -104,6 +104,18 @@ Ref_MODULES := \
 	$(CFDP_MODULES) \
   	\
   	$(UTILS_MODULES)
+
+ARDUINO_DRV_MODULES := \
+        Drv/Arduino/ArduinoSerialDriver
+
+ARDUINO_REF_MODULES := \
+        ArduinoRef/Top
+
+ArduinoRef_MODULES := \
+        $(ARDUINO_REF_MODULES) \
+        $(ARDUINO_DRV_MODULES) \
+        $(FW_MODULES) \
+        $(UTILS_MODULES)
 		
 ACDEVTEST_MODULES := \
 	Autocoders/test/active_tester \
@@ -203,7 +215,7 @@ OTHER_MODULES := \
 
 # List deployments
 
-DEPLOYMENTS := Ref acdev RPI
+DEPLOYMENTS := Ref ArduinoRef acdev RPI
 
 # Location of ground/gse software. Autocoded dictionary elements are copied here.
 GDS_MODULE := Gse

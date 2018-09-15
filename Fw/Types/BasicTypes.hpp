@@ -25,9 +25,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus
-
 // Define native integer/unsigned integer types
 #ifdef _WRS_KERNEL
+typedef int32_t NATIVE_INT_TYPE;
+typedef uint32_t NATIVE_UINT_TYPE;
+#elif defined ARDUINO
 typedef int32_t NATIVE_INT_TYPE;
 typedef uint32_t NATIVE_UINT_TYPE;
 #else
@@ -97,7 +99,6 @@ typedef float   F32; //!< 32-bit floating point
 #if FW_HAS_F64
  typedef double  F64; //!< 64-bit floating point
 #endif
-
 #ifndef NULL
 #define NULL  (0)  //!< NULL
 #endif

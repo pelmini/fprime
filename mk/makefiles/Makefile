@@ -25,8 +25,16 @@ SLOC_TARGETS := $(foreach module,$($(DEPLOYMENT)_MODULES),$(subst /,,$(module))_
 
 bin_echo:
 	@echo "Building $(BUILD)"
-
+#Build normal target if Arduino
+ifneq ("$(ARDUINO_BUILD)","TRUE")
 bin: bin_echo $(BUILD_ROOT)/$(DEPLOYMENT)/$(OUTPUT_DIR)/$(BIN_PREFIX)$(DEPLOYMENT)$(BIN_SUFFIX)
+endif
+#Check if Arduino build the "hex"
+ifeq ("$(ARDUINO_BUILD)","TRUE")
+bin: bin_echo $(BUILD_ROOT)/$(DEPLOYMENT)/$(OUTPUT_DIR)/$(BIN_PREFIX)$(DEPLOYMENT)$(BIN_SUFFIX).hex
+endif
+
+hex:  $(BUILD_ROOT)/$(DEPLOYMENT)/$(OUTPUT_DIR)/$(BIN_PREFIX)$(DEPLOYMENT)$(BIN_SUFFIX).hex
 
 clean: $(CLEAN_TARGETS) ampcs_clean
 	$(RM_DIR) $(BUILD_ROOT)/$(DEPLOYMENT)/$(OUTPUT_DIR)
@@ -65,8 +73,12 @@ $(BUILD_ROOT)/$(DEPLOYMENT)/$(OUTPUT_DIR)/$(BIN_PREFIX)$(DEPLOYMENT)$(BIN_SUFFIX
 	$(GEN_VERSION) $(BUILD_ROOT)/$(DEPLOYMENT)/$(OUTPUT_DIR)/version.c
 	$(CC) $(COMPILE_ONLY) $(COMPILE_TO) $(BUILD_ROOT)/$(DEPLOYMENT)/$(OUTPUT_DIR)/version.o $(BUILD_ROOT)/$(DEPLOYMENT)/$(OUTPUT_DIR)/version.c
 	@echo Linking binary...
-	@$(LINK_BIN) $(LINK_BIN_FLAGS) $(LINK_BIN_TO) $@ $^ $(LINK_LIBS) $(BUILD_ROOT)/$(DEPLOYMENT)/$(OUTPUT_DIR)/version.o
-
+	$(LINK_BIN) $(LINK_BIN_FLAGS) $(LINK_BIN_TO) $@ $^ $(LINK_LIBS) $(BUILD_ROOT)/$(DEPLOYMENT)/$(OUTPUT_DIR)/version.o
+endif
+#Arduino builds should produce a hexfile output byproduct
+ifeq ("$(ARDUINO_BUILD)", "TRUE")
+$(BUILD_ROOT)/$(DEPLOYMENT)/$(OUTPUT_DIR)/$(BIN_PREFIX)$(DEPLOYMENT)$(BIN_SUFFIX).hex: $(BUILD_ROOT)/$(DEPLOYMENT)/$(OUTPUT_DIR)/$(BIN_PREFIX)$(DEPLOYMENT)$(BIN_SUFFIX)
+	$(OBJCOPY) -O ihex -R .eeprom $(BUILD_ROOT)/$(DEPLOYMENT)/$(OUTPUT_DIR)/$(BIN_PREFIX)$(DEPLOYMENT)$(BIN_SUFFIX) $(BUILD_ROOT)/$(DEPLOYMENT)/$(OUTPUT_DIR)/$(BIN_PREFIX)$(DEPLOYMENT)$(BIN_SUFFIX).hex
 endif
 # Module-level code generator targets
 
