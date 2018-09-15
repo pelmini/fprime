@@ -11,4 +11,4 @@
 #   or an ITAR exemption prior to the export or transfer.
 #
 
-SRC = SerialReadPortAi.xml SerialWritePortAi.xml
+SRC = SerialReadPortAi.xml SerialWritePortAi.xml SerialPollPortAi.xml
