@@ -1,6 +1,6 @@
 # Makefile to run global make.
-DEPLOYMENT := examples/Arduino
-BUILD_ROOT ?= $(subst /$(DEPLOYMENT),,$(CURDIR))
+DEPLOYMENT := Arduino
+BUILD_ROOT ?= $(subst /examples/$(DEPLOYMENT),,$(CURDIR))
 
 export BUILD_ROOT
 

@@ -46,8 +46,6 @@ SVC_MODULES := \
 	Svc/RateGroupDriver \
 	Svc/Sched \
 	Svc/ComLogger \
-	Svc/SocketGndIf \
-	Svc/BuffGndSockIf \
 	Svc/TlmChan \
 	Svc/PassiveTextLogger \
 	Svc/PassiveConsoleTextLogger \
@@ -68,6 +66,10 @@ SVC_MODULES := \
     Svc/AssertFatalAdapter \
     Svc/FatalHandler \
 	Svc/FileManager
+
+
+#	Svc/SocketGndIf \
+#	Svc/BuffGndSockIf \
 
 DEMO_DRV_MODULES := \
 	Drv/DataTypes \
@@ -105,17 +107,23 @@ Ref_MODULES := \
   	\
   	$(UTILS_MODULES)
 
-ARDUINO_DRV_MODULES := \
-        Drv/Arduino/ArduinoSerialDriver
+#ARDUINO_DRV_MODULES := \
+#        Drv/Arduino/ArduinoSerialDriver
+#
 
 ARDUINO_REF_MODULES := \
-        ArduinoRef/Top
+        examples/Arduino/Top
 
-ArduinoRef_MODULES := \
+Arduino_MODULES := \
         $(ARDUINO_REF_MODULES) \
-        $(ARDUINO_DRV_MODULES) \
+	$(SVC_MODULES) \
         $(FW_MODULES) \
+	$(OS_MODULES) \
+	$(CFDP_MODULES) \
         $(UTILS_MODULES)
+
+
+#        $(ARDUINO_DRV_MODULES) \
 		
 ACDEVTEST_MODULES := \
 	Autocoders/test/active_tester \
@@ -215,7 +223,7 @@ OTHER_MODULES := \
 
 # List deployments
 
-DEPLOYMENTS := Ref ArduinoRef acdev RPI
+DEPLOYMENTS := Ref Arduino acdev RPI
 
 # Location of ground/gse software. Autocoded dictionary elements are copied here.
 GDS_MODULE := Gse

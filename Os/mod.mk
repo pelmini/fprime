@@ -88,6 +88,32 @@ SRC_RASPIAN =   Pthreads/Queue.cpp \
 				Posix/Mutex.cpp \
 				Linux/FileSystem.cpp
 
+SRC_ARDUINO =   Baremetal/Queue.cpp \
+				Baremetal/File.cpp \
+				Baremetal/Task.cpp \
+				Baremetal/Mutex.cpp \
+				Baremetal/TaskRunner/TaskRunner.cpp \
+               	Pthreads/BufferQueueCommon.cpp \
+                Pthreads/FIFOBufferQueue.cpp
+
+
+
+SRC_TEENSY32 =  Baremetal/Queue.cpp \
+				Baremetal/File.cpp \
+				Baremetal/Task.cpp \
+				Baremetal/Mutex.cpp \
+				Baremetal/TaskRunner/TaskRunner.cpp \
+               	Pthreads/BufferQueueCommon.cpp \
+                Pthreads/FIFOBufferQueue.cpp
+
+#				Linux/File.cpp \
+#				LogPrintf.cpp \
+#				Linux/InterruptLock.cpp \
+#				Linux/WatchdogTimer.cpp \
+#				X86/IntervalTimer.cpp \
+#				Linux/IntervalTimer.cpp \
+#				Linux/FileSystem.cpp
+
 				
 
 
