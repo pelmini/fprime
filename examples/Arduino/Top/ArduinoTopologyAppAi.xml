@@ -19,11 +19,10 @@
    <import_component_type>Svc/GndIf/GndIfComponentAi.xml</import_component_type>
    <import_component_type>Svc/BufferManager/BufferManagerComponentAi.xml</import_component_type>
    <import_component_type>Svc/ActiveLogger/ActiveLoggerComponentAi.xml</import_component_type>
-   <import_component_type>Svc/LinuxTimer/LinuxTimerComponentAi.xml</import_component_type>
+   <!--import_component_type>Svc/LinuxTimer/LinuxTimerComponentAi.xml</import_component_type-->
    <import_component_type>Svc/Time/TimeComponentAi.xml</import_component_type>
    <import_component_type>Svc/RateGroupDriver/RateGroupDriverComponentAi.xml</import_component_type>
    <import_component_type>Svc/FileDownlink/FileDownlinkComponentAi.xml</import_component_type>
-   <import_component_type>Svc/PassiveTextLogger/PassiveTextLoggerComponentAi.xml</import_component_type>
 
    <!-- Declare component instances - must match names in Components.hpp -->
 
@@ -49,21 +48,17 @@
    
    <instance namespace="Svc" name="health" type="Health" base_id="1100"  base_id_window="20" />
    
-   <instance namespace="Svc" name="sockGndIf" type="GndIf" base_id="1200"  base_id_window="20" />
-   
    <instance namespace="Svc" name="fileDownlinkBufferManager" type="BufferManager" base_id="1300"  base_id_window="20" />
    
    <instance namespace="Svc" name="eventLogger" type="ActiveLogger" base_id="1400"  base_id_window="20" />
    
-   <instance namespace="Svc" name="linuxTime" type="Time" base_id="1500"  base_id_window="20" />
+   <!--instance namespace="Svc" name="linuxTime" type="Time" base_id="1500"  base_id_window="20" />
    
-   <instance namespace="Svc" name="linuxTimer" type="LinuxTimer" base_id="1600"  base_id_window="20" />
+   <instance namespace="Svc" name="linuxTimer" type="LinuxTimer" base_id="1600"  base_id_window="20" />-->
 
    <instance namespace="Svc" name="rateGroupDriverComp" type="RateGroupDriver" base_id="1700"  base_id_window="20" />
    
    <instance namespace="Svc" name="fileDownlink" type="FileDownlink" base_id="1800"  base_id_window="20" />
-   
-   <instance namespace="Svc" name="textLogger" type="PassiveTextLogger" base_id="1900"  base_id_window="20" />
    
    <!-- Command Registration/Dispatch/Reply Connections -->
    
@@ -162,10 +157,6 @@
    
    <!-- Event Logger Binary Connections -->
    
-   <connection name = "SockGndIfLog">
-       <source component = "sockGndIf" port = "Log" type = "Log" num = "0"/>
-        <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
-   </connection>
    <connection name = "PrmDbLog">
        <source component = "prmDb" port = "Log" type = "Log" num = "0"/>
         <target component = "eventLogger" port = "LogRecv" type = "Log" num = "0"/>
@@ -217,43 +208,6 @@
    
    <!-- Event Logger Text Connections -->
    
-   <connection name = "CmdSeqTextLog">
-       <source component = "cmdSeq" port = "LogText" type = "LogText" num = "0"/>
-        <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-   </connection>
-   <connection name = "EventLoggerTextLog">
-       <source component = "eventLogger" port = "LogText" type = "LogText" num = "0"/>
-        <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-   </connection>
-   <connection name = "HealthTextLog">
-       <source component = "health" port = "LogText" type = "LogText" num = "0"/>
-        <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-   </connection>
-   <connection name = "SockGndIfTextLog">
-       <source component = "sockGndIf" port = "LogText" type = "LogText" num = "0"/>
-        <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-   </connection>
-   <connection name = "FatalAdapterTextLog">
-       <source component = "fatalAdapter" port = "LogText" type = "LogText" num = "0"/>
-        <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-   </connection>
-   <connection name = "rateGroup10HzCompTextLog">
-       <source component = "rateGroup10HzComp" port = "LogText" type = "LogText" num = "0"/>
-        <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-   </connection>
-   <connection name = "rateGroup1HzCompTextLog">
-       <source component = "rateGroup1HzComp" port = "LogText" type = "LogText" num = "0"/>
-        <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-   </connection>
-   <connection name = "PrmDbTextLogger">
-       <source component = "prmDb" port = "LogText" type = "LogText" num = "0"/>
-        <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-   </connection>
-   <connection name = "CmdDispTextLogger">
-       <source component = "cmdDisp" port = "LogText" type = "LogText" num = "0"/>
-        <target component = "textLogger" port = "TextLogger" type = "LogText" num = "0"/>
-   </connection>
-
    <!-- Telemetry Connections -->
 
    <connection name = "fileDownlinkTlm">
@@ -290,7 +244,7 @@
    </connection>
  
    <!-- Time Connections -->
-
+   <!--
    <connection name = "prmDbTime">
        <source component = "prmDb" port = "Time" type = "Time" num = "0"/>
         <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
@@ -334,19 +288,15 @@
    <connection name = "fatalAdapterTime">
        <source component = "fatalAdapter" port = "Time" type = "Time" num = "0"/>
         <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-   </connection>
-   <connection name = "sockGndIfTime">
-       <source component = "sockGndIf" port = "Time" type = "Time" num = "0"/>
-        <target component = "linuxTime" port = "timeGetPort" type = "Time" num = "0"/>
-   </connection>
+   </connection> -->
 
    <!-- Rate Group Connections -->
    
    <!-- Linux Timer Connection -->
-   <connection name = "LinuxTimer">
+   <!--<connection name = "LinuxTimer">
        <source component = "linuxTimer" port = "CycleOut" type = "Cycle" num = "0"/>
         <target component = "rateGroupDriverComp" port = "CycleIn" type = "Cycle" num = "0"/>
-   </connection>
+   </connection>-->
 
    <!-- 10Hz Rate Group -->
    <connection name = "rateGroupDriverComp10Hz">
@@ -460,49 +410,17 @@
    <!-- Uplink Connections -->
    
    <!-- Uplink connection to command dispatcher should not conflict with command sequencer -->
-   <connection name = "cmdDispPkts">
-       <source component = "sockGndIf" port = "uplinkPort" type = "Com" num = "0"/>
-        <target component = "cmdDisp" port = "seqCmdBuff" type = "Com" num = "0"/>
-   </connection>
-
-   <connection name = "sockGndIfFileUplinkBufferGet">
-       <source component = "sockGndIf" port = "fileUplinkBufferGet" type = "BufferGet" num = "0"/>
-        <target component = "fileUplinkBufferManager" port = "bufferGetCallee" type = "BufferGet" num = "0"/>
-   </connection>
    <connection name = "fileUplinkBuffIn">
        <source component = "fileUplink" port = "bufferSendOut" type = "BufferSend" num = "0"/>
         <target component = "fileUplinkBufferManager" port = "bufferSendIn" type = "BufferSend" num = "0"/>
    </connection>
-   <connection name = "sockGndIfFileUplinkBufferSend">
-       <source component = "sockGndIf" port = "fileUplinkBufferSendOut" type = "BufferSend" num = "0"/>
-        <target component = "fileUplink" port = "bufferSendIn" type = "BufferSend" num = "0"/>
-   </connection>
 
    <!-- Downlink Connections -->
 
-   <connection name = "eventLoggerPkts">
-       <source component = "eventLogger" port = "PktSend" type = "Com" num = "0"/>
-        <target component = "sockGndIf" port = "downlinkPort" type = "Com" num = "0"/>
-   </connection>
-   
-   <connection name = "chanTlmPkts">
-       <source component = "chanTlm" port = "PktSend" type = "Com" num = "0"/>
-        <target component = "sockGndIf" port = "downlinkPort" type = "Com" num = "0"/>
-   </connection>
-   
    <connection name = "fileDownlinkBufferGet">
        <source component = "fileDownlink" port = "bufferGetCaller" type = "BufferGet" num = "0"/>
         <target component = "fileDownlinkBufferManager" port = "bufferGetCallee" type = "BufferGet" num = "0"/>
    </connection>
-   <connection name = "fileDownlinkBufferManagerBufferReturn">
-       <source component = "sockGndIf" port = "fileDownlinkBufferSendOut" type = "BufferSend" num = "0"/>
-        <target component = "fileDownlinkBufferManager" port = "bufferSendIn" type = "BufferSend" num = "0"/>
-   </connection>
-   <connection name = "fileDownlinkBufferSend">
-       <source component = "fileDownlink" port = "bufferSendOut" type = "BufferSend" num = "0"/>
-        <target component = "sockGndIf" port = "fileDownlinkBufferSendIn" type = "BufferSend" num = "0"/>
-   </connection>
-   
    <!-- Fault Connectionss -->
    <connection name = "eventLoggerFatalOut">
        <source component = "eventLogger" port = "FatalAnnounce" type = "FatalEvent" num = "0"/>

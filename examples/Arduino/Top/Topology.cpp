@@ -8,10 +8,10 @@
 
 enum {
     DOWNLINK_PACKET_SIZE = 500,
-    DOWNLINK_BUFFER_STORE_SIZE = 2500,
-    DOWNLINK_BUFFER_QUEUE_SIZE = 5,
-    UPLINK_BUFFER_STORE_SIZE = 3000,
-    UPLINK_BUFFER_QUEUE_SIZE = 30
+    DOWNLINK_BUFFER_STORE_SIZE = 500,
+    DOWNLINK_BUFFER_QUEUE_SIZE = 1,
+    UPLINK_BUFFER_STORE_SIZE = 500,
+    UPLINK_BUFFER_QUEUE_SIZE = 1
 };
 
 // Component instances
@@ -30,18 +30,7 @@ static NATIVE_UINT_TYPE rg1HzContext[] = {0,0,Arduino::CONTEXT_RPI_DEMO_1Hz,0,0,
 
 Svc::ActiveRateGroupImpl rateGroup1HzComp("RG1Hz",rg1HzContext,FW_NUM_ARRAY_ELEMENTS(rg1HzContext));
 
-// Command Components
-Svc::SocketGndIfImpl sockGndIf("SGIF");
-
-#if FW_ENABLE_TEXT_LOGGING
-Svc::ConsoleTextLoggerImpl textLogger("TLOG");
-#endif
-
 Svc::ActiveLoggerImpl eventLogger("ELOG");
-
-Svc::LinuxTimeImpl linuxTime("LTIME");
-
-Svc::LinuxTimerComponentImpl linuxTimer("LTIMER");
 
 Svc::TlmChanImpl chanTlm("TLM");
 
@@ -78,27 +67,22 @@ void constructApp() {
     // Initialize the rate groups
     rateGroup10HzComp.init(10,0);
     rateGroup1HzComp.init(10,1);
-    
-#if FW_ENABLE_TEXT_LOGGING
-    textLogger.init();
-#endif
 
     eventLogger.init(10,0);
 
-    linuxTime.init(0);
+    //linuxTime.init(0);
 
-    linuxTimer.init(0);
+    //linuxTimer.init(0);
 
     chanTlm.init(10,0);
 
     cmdDisp.init(20,0);
 
     cmdSeq.init(10,0);
-    cmdSeq.allocateBuffer(0,seqMallocator,5*1024);
+    cmdSeq.allocateBuffer(0,seqMallocator,1);
 
     prmDb.init(10,0);
 
-    sockGndIf.init(0);
 
     fileUplink.init(30, 0);
     fileDownlink.init(30, 0);
@@ -109,7 +93,7 @@ void constructApp() {
     fatalHandler.init(0);
     health.init(25,0);
 
-    constructRPIArchitecture();
+    constructArduinoArchitecture();
 
     /* Register commands */
     cmdSeq.regCommands();
@@ -158,7 +142,7 @@ void constructApp() {
 }
 
 void exitTasks(void) {
-    linuxTimer.quit();
+    //linuxTimer.quit();
     rateGroup1HzComp.exit();
     rateGroup10HzComp.exit();
     cmdDisp.exit();
