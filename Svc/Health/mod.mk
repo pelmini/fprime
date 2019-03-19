@@ -24,3 +24,5 @@ SRC_CYGWIN = Stub/HealthComponentStubChecks.cpp
 SRC_DARWIN = Stub/HealthComponentStubChecks.cpp
 
 SRC_RASPIAN = Stub/HealthComponentStubChecks.cpp	
+
+SRC_TEENSY32 = Stub/HealthComponentStubChecks.cpp	

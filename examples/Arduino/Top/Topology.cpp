@@ -2,155 +2,102 @@
 #include <Os/Task.hpp>
 #include <Os/Log.hpp>
 #include <Os/File.hpp>
+#include <Os/Baremetal/TaskRunner/TaskRunner.hpp>
 #include <Fw/Types/MallocAllocator.hpp>
 #include <examples/Arduino/Top/ArduinoSchedContexts.hpp>
 #include "../../Arduino/Top/Components.hpp"
+#include <Arduino.h>
 
-enum {
-    DOWNLINK_PACKET_SIZE = 500,
-    DOWNLINK_BUFFER_STORE_SIZE = 500,
-    DOWNLINK_BUFFER_QUEUE_SIZE = 1,
-    UPLINK_BUFFER_STORE_SIZE = 500,
-    UPLINK_BUFFER_QUEUE_SIZE = 1
-};
-
-// Component instances
-
-// Rate Group Dividers for 10Hz and 1Hz
-
-static NATIVE_INT_TYPE rgDivs[] = {1,10,0};
-Svc::RateGroupDriverImpl rateGroupDriverComp("RGDRV",rgDivs,FW_NUM_ARRAY_ELEMENTS(rgDivs));
+// Setup the rate group driver used to drive all the ActiveRateGroups connected to it.
+// For each active rate group, there is a rate divisor that represents how often it is run.
+static NATIVE_INT_TYPE rate_divisors[] = {1, 10};
+Svc::RateGroupDriverImpl rateGroupDriverComp("RGDRV", rate_divisors, FW_NUM_ARRAY_ELEMENTS(rate_divisors));
 
 // Context array variables are passed to rate group members if needed to distinguish one call from another
 // These context must match the rate group members connected in RPITopologyAi.xml
-static NATIVE_UINT_TYPE rg10HzContext[] = {Arduino::CONTEXT_RPI_DEMO_10Hz,0,0,0,0,0,0,0,0,0};
+static NATIVE_UINT_TYPE rg10HzContext[] = {Arduino::CONTEXT_RPI_DEMO_10Hz, 0, 0, 0};
 Svc::ActiveRateGroupImpl rateGroup10HzComp("RG10Hz",rg10HzContext,FW_NUM_ARRAY_ELEMENTS(rg10HzContext));
-
-static NATIVE_UINT_TYPE rg1HzContext[] = {0,0,Arduino::CONTEXT_RPI_DEMO_1Hz,0,0,0,0,0,0,0};
-
+static NATIVE_UINT_TYPE rg1HzContext[] = {0, 0, Arduino::CONTEXT_RPI_DEMO_1Hz, 0};
 Svc::ActiveRateGroupImpl rateGroup1HzComp("RG1Hz",rg1HzContext,FW_NUM_ARRAY_ELEMENTS(rg1HzContext));
 
+// Initialize the rate-group spinning task
+Os::Task rgTask;
+// Standard system components
 Svc::ActiveLoggerImpl eventLogger("ELOG");
-
 Svc::TlmChanImpl chanTlm("TLM");
-
 Svc::CommandDispatcherImpl cmdDisp("CMDDISP");
-
-// This needs to be statically allocated
-Fw::MallocAllocator seqMallocator;
-
-Svc::CmdSequencerComponentImpl cmdSeq("CMDSEQ");
-
-Svc::PrmDbImpl prmDb("PRM","PrmDb.dat");
-
-Svc::FileUplink fileUplink("fileUplink");
-
-Svc::FileDownlink fileDownlink ("fileDownlink", DOWNLINK_PACKET_SIZE);
-
-Svc::BufferManager fileDownlinkBufferManager("fileDownlinkBufferManager", DOWNLINK_BUFFER_STORE_SIZE, DOWNLINK_BUFFER_QUEUE_SIZE);
-
-Svc::BufferManager fileUplinkBufferManager("fileUplinkBufferManager", UPLINK_BUFFER_STORE_SIZE, UPLINK_BUFFER_QUEUE_SIZE);
-
 Svc::HealthImpl health("health");
 
-Svc::AssertFatalAdapterComponentImpl fatalAdapter("fatalAdapter");
+// Arduino specific components
+Arduino::LedBlinkerComponentImpl ledBlinker("Blinker");
+Arduino::HardwareRateDriver hardwareRateDriver("RateDr", 100);
 
-Svc::FatalHandlerComponentImpl fatalHandler("fatalHandler");
+// Baremetal setup for the task runner
+Os::TaskRunner taskRunner(NULL);
 
-
-
+/**
+ * Construct App:
+ *
+ * Constructs the App. It initialize components, call for command registration and
+ * starts tasks. This is the initialization of the application, so new tasks and
+ * memory can be acquired here, but should not be created at a later point.
+ */
 void constructApp() {
-
     // Initialize rate group driver
     rateGroupDriverComp.init();
 
     // Initialize the rate groups
-    rateGroup10HzComp.init(10,0);
-    rateGroup1HzComp.init(10,1);
+    rateGroup10HzComp.init(10, 0);
+    rateGroup1HzComp.init(10, 1);
 
-    eventLogger.init(10,0);
-
-    //linuxTime.init(0);
-
-    //linuxTimer.init(0);
-
-    chanTlm.init(10,0);
-
+    // Initialize the core data handling components
+    eventLogger.init(10, 0);
+    chanTlm.init(10, 0);
     cmdDisp.init(20,0);
-
-    cmdSeq.init(10,0);
-    cmdSeq.allocateBuffer(0,seqMallocator,1);
-
-    prmDb.init(10,0);
-
-
-    fileUplink.init(30, 0);
-    fileDownlink.init(30, 0);
-    fileUplinkBufferManager.init(0);
-    fileDownlinkBufferManager.init(1);
-
-    fatalAdapter.init(0);
-    fatalHandler.init(0);
     health.init(25,0);
-
+    ledBlinker.init(0);
+    // Callback to initialize architecture, connect ports, etc.
     constructArduinoArchitecture();
 
-    /* Register commands */
-    cmdSeq.regCommands();
+    // Register all commands into the system
     cmdDisp.regCommands();
     eventLogger.regCommands();
-    prmDb.regCommands();
-    fileDownlink.regCommands();
     health.regCommands();
 
-    // read parameters
-    prmDb.readParamFile();
-
-    // set health ping entries
-
-    // This list has to match the connections in RPITopologyAppAi.xml
-
+    // Setup the health an ping entries. These need to be in the same order as the
+    // ports connected to the health component. Once the ping entry array is created
+    // pass it into the ping-entries array.
     Svc::HealthImpl::PingEntry pingEntries[] = {
-        {3,5,rateGroup10HzComp.getObjName()}, // 0
-        {3,5,rateGroup1HzComp.getObjName()}, // 1
-        {3,5,cmdDisp.getObjName()}, // 2
-        {3,5,cmdSeq.getObjName()}, // 3
-        {3,5,chanTlm.getObjName()}, // 4
-        {3,5,eventLogger.getObjName()}, // 5
-        {3,5,prmDb.getObjName()}, // 6
-        {3,5,fileDownlink.getObjName()}, // 7
-        {3,5,fileUplink.getObjName()}, // 8
+        {3, 5, rateGroup10HzComp.getObjName()},
+        {3, 5, rateGroup1HzComp.getObjName()},
+        {3, 5, cmdDisp.getObjName()},
+        {3, 5, chanTlm.getObjName()},
+        {3, 5, eventLogger.getObjName()}
     };
-
-    // register ping table
     health.setPingEntries(pingEntries,FW_NUM_ARRAY_ELEMENTS(pingEntries),0x123);
-    // Active component startup
-    // start rate groups
-    rateGroup10HzComp.start(0, 120,10 * 1024);
-    rateGroup1HzComp.start(0, 119,10 * 1024);
-    // start dispatcher
-    cmdDisp.start(0,101,10*1024);
-    // start sequencer
-    cmdSeq.start(0,100,10*1024);
-    // start telemetry
-    eventLogger.start(0,98,10*1024);
-    chanTlm.start(0,97,10*1024);
-    prmDb.start(0,96,10*1024);
 
-    fileDownlink.start(0, 100, 10*1024);
-    fileUplink.start(0, 100, 10*1024);
+    // Start all active components' tasks thus finishing the setup portion of this code
+    rateGroup10HzComp.start(0, 120, 10 * 1024);
+    rateGroup1HzComp.start(0, 119, 10 * 1024);
+    cmdDisp.start(0, 101, 10 * 1024);
+    eventLogger.start(0, 98, 10 * 1024);
+    chanTlm.start(0, 97, 10 * 1024);
+    // Start the task for the rate group
+    Fw::EightyCharString rgTaskName("RG_TASK");
+//    rgTask.start(rgTaskName, 0xDEAF, 121, 0, hertzRunner, &rgTask, 0);
+    taskRunner.run();
 }
-
+/**
+ * Exit Tasks:
+ *
+ * Exits the tasks in preparation for stopping the software. This is likely
+ * not needed for Arduino projects, as they run forever, however; it is here
+ * for completeness.
+ */
 void exitTasks(void) {
-    //linuxTimer.quit();
     rateGroup1HzComp.exit();
     rateGroup10HzComp.exit();
     cmdDisp.exit();
     eventLogger.exit();
     chanTlm.exit();
-    prmDb.exit();
-    fileUplink.exit();
-    fileDownlink.exit();
-    cmdSeq.exit();
 }
-

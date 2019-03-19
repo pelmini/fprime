@@ -100,11 +100,14 @@ SRC_ARDUINO =   Baremetal/Queue.cpp \
 
 SRC_TEENSY32 =  Baremetal/Queue.cpp \
 				Baremetal/File.cpp \
+				Baremetal/FileSystem.cpp \
 				Baremetal/Task.cpp \
 				Baremetal/Mutex.cpp \
+				Baremetal/IntervalTimer.cpp \
 				Baremetal/TaskRunner/TaskRunner.cpp \
                	Pthreads/BufferQueueCommon.cpp \
-                Pthreads/FIFOBufferQueue.cpp
+                Pthreads/FIFOBufferQueue.cpp \
+                LogPrintf.cpp
 
 #				Linux/File.cpp \
 #				LogPrintf.cpp \

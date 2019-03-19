@@ -22,6 +22,8 @@ SRC_DARWIN = FatalHandlerComponentLinuxImpl.cpp
 
 SRC_RASPIAN = FatalHandlerComponentLinuxImpl.cpp
 
+SRC_TEENSY32 = FatalHandlerComponentBaremetalImpl.cpp
+
 HDR = FatalHandlerComponentImpl.hpp	
 
 SUBDIRS = 

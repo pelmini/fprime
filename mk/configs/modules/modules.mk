@@ -19,6 +19,20 @@ FW_MODULES := \
 	Fw/SerializableFile \
 	Fw/Types
 
+FW_MINIMAL_MODULES := \
+	Fw/Cfg \
+	Fw/Buffer \
+	Fw/Comp \
+	Fw/Obj \
+	Fw/Port \
+	Fw/Cmd \
+	Fw/Tlm \
+	Fw/Prm \
+	Fw/Log \
+	Fw/Time \
+	Fw/Com \
+	Fw/Types
+
 FW_GTEST_MODULES := \
 	Fw/SerializableFile/test/TestSerializable \
 	Fw/FilePacket/GTest \
@@ -36,6 +50,35 @@ CFDP_GTEST_MODULES := \
 UTILS_MODULES := \
 	Utils/Hash
         
+SVC_MINIMAL_MODULES := \
+	Svc/BufferManager \
+	Svc/CmdDispatcher \
+	Svc/CmdSequencer \
+	Svc/Seq \
+	Svc/GndIf \
+	Svc/ActiveRateGroup \
+	Svc/RateGroupDriver \
+	Svc/Sched \
+	Svc/ComLogger \
+	Svc/TlmChan \
+	Svc/PassiveTextLogger \
+	Svc/PassiveConsoleTextLogger \
+	Svc/Time \
+	Svc/Cycle \
+	Svc/LinuxTime \
+	Svc/LinuxTimer \
+	Svc/ActiveLogger \
+	Svc/Fatal \
+	Svc/PolyIf \
+	Svc/PolyDb \
+	Svc/PrmDb \
+	Svc/Ping \
+	Svc/Health \
+	Svc/WatchDog \
+    Svc/AssertFatalAdapter \
+    Svc/FatalHandler \
+	Svc/FileManager
+
 SVC_MODULES := \
 	Svc/BufferManager \
 	Svc/CmdDispatcher \
@@ -112,19 +155,18 @@ Ref_MODULES := \
 #
 
 ARDUINO_REF_MODULES := \
-        examples/Arduino/Top
+        examples/Arduino/Top \
+        examples/Arduino/HardwareRateDriver \
+        examples/Arduino/LedBlinker
 
 Arduino_MODULES := \
         $(ARDUINO_REF_MODULES) \
-	$(SVC_MODULES) \
-        $(FW_MODULES) \
+	$(SVC_MINIMAL_MODULES) \
+        $(FW_MINIMAL_MODULES) \
 	$(OS_MODULES) \
-	$(CFDP_MODULES) \
-        $(UTILS_MODULES)
+        $(UTILS_MODULES) \
+	$(CFDP_MODULES)
 
-
-#        $(ARDUINO_DRV_MODULES) \
-		
 ACDEVTEST_MODULES := \
 	Autocoders/test/active_tester \
 	Autocoders/test/app1 \
