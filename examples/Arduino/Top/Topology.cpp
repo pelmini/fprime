@@ -33,7 +33,7 @@ Arduino::LedBlinkerComponentImpl ledBlinker("Blinker");
 Arduino::HardwareRateDriver hardwareRateDriver("RateDr", 100);
 
 // Baremetal setup for the task runner
-Os::TaskRunner taskRunner(NULL);
+Os::TaskRunner taskRunner;
 
 /**
  * Construct App:
@@ -75,7 +75,7 @@ void constructApp() {
         {3, 5, eventLogger.getObjName()}
     };
     health.setPingEntries(pingEntries,FW_NUM_ARRAY_ELEMENTS(pingEntries),0x123);
-
+    hardwareRateDriver.start();
     // Start all active components' tasks thus finishing the setup portion of this code
     rateGroup10HzComp.start(0, 120, 10 * 1024);
     rateGroup1HzComp.start(0, 119, 10 * 1024);
