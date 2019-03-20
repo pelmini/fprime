@@ -7,7 +7,10 @@ namespace Arduino {
 IntervalTimer s_itimer;
 
 void HardwareRateDriver::start() {
-    s_itimer.begin(HardwareRateDriver::s_timerISR, s_itimer * 1000);
+    bool ok = s_itimer.begin(HardwareRateDriver::s_timerISR, m_interval * 1000);
+    if (!ok) {
+        digitalWrite(13, HIGH);
+    }
 }
 
 void HardwareRateDriver::stop() {

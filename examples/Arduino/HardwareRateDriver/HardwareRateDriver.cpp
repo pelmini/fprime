@@ -12,7 +12,7 @@ HardwareRateDriver* HardwareRateDriver::s_driver = NULL;
 #else
     HardwareRateDriver::HardwareRateDriver(U32 intervalMs),
 #endif
-        m_interval(0)
+        m_interval(intervalMs)
     {
         s_driver = this;
     }
@@ -24,9 +24,7 @@ HardwareRateDriver* HardwareRateDriver::s_driver = NULL;
         now.take();
         HardwareRateDriver* driver = reinterpret_cast<HardwareRateDriver*>(comp);
         //Check if it is time to run the group
-        if (now.diffUSec(driver->m_last) >= driver->m_interval) {
-            driver->CycleOut_out(0, now);
-            driver->m_last = now;
-        }
+        driver->CycleOut_out(0, now);
+        driver->m_last = now;
     }
 }

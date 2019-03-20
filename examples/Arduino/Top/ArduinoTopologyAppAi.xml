@@ -16,7 +16,7 @@
    <import_component_type>Svc/BufferManager/BufferManagerComponentAi.xml</import_component_type>
    <import_component_type>Svc/AssertFatalAdapter/AssertFatalAdapterComponentAi.xml</import_component_type>
    <import_component_type>Svc/Health/HealthComponentAi.xml</import_component_type>
-   <import_component_type>Svc/GndIf/GndIfComponentAi.xml</import_component_type>
+   <import_component_type>Svc/GroundInterface/GroundInterfaceComponentAi.xml</import_component_type>
    <import_component_type>Svc/BufferManager/BufferManagerComponentAi.xml</import_component_type>
    <import_component_type>Svc/ActiveLogger/ActiveLoggerComponentAi.xml</import_component_type>
    <!--import_component_type>Svc/LinuxTimer/LinuxTimerComponentAi.xml</import_component_type-->
@@ -25,6 +25,7 @@
    <import_component_type>Svc/FileDownlink/FileDownlinkComponentAi.xml</import_component_type>
    <import_component_type>examples/Arduino/HardwareRateDriver/HardwareRateDriverComponentAi.xml</import_component_type>
    <import_component_type>examples/Arduino/LedBlinker/LedBlinkerComponentAi.xml</import_component_type>
+   <import_component_type>examples/Arduino/SerialDriver/SerialDriverComponentAi.xml</import_component_type>
 
    <!-- Declare component instances - must match names in Components.hpp -->
 
@@ -50,9 +51,13 @@
 
    <instance namespace="Svc" name="rateGroupDriverComp" type="RateGroupDriver" base_id="1700"  base_id_window="20" />
 
-   <instance namespace="Arduino" name="ledBlinker" type="LedBlinker" base_id="1800"  base_id_window="20" />
+   <instance namespace="Svc" name="groundInterface" type="GroundInterface" base_id="1800"  base_id_window="20" />
 
-   <instance namespace="Arduino" name="hardwareRateDriver" type="HardwareRateDriver" base_id="1900"  base_id_window="20" />
+   <instance namespace="Arduino" name="ledBlinker" type="LedBlinker" base_id="1900"  base_id_window="20" />
+
+   <instance namespace="Arduino" name="hardwareRateDriver" type="HardwareRateDriver" base_id="2000"  base_id_window="20" />
+
+   <instance namespace="Arduino" name="serialDriver" type="SerialDriver" base_id="2100"  base_id_window="20" />
 
    <!-- Command Registration/Dispatch/Reply Connections -->
    
@@ -260,9 +265,36 @@
        <target component = "health" port = "PingReturn" type = "Ping" num = "4"/>
    </connection>
 
+   <!-- Ground Interface Connections -->
+   <connection name = "cmdDispPkts">
+       <source component = "groundInterface" port = "uplinkPort" type = "Com" num = "0"/>
+        <target component = "cmdDisp" port = "seqCmdBuff" type = "Com" num = "0"/>
+   </connection>
+
+   <connection name = "eventLoggerPkts">
+       <source component = "eventLogger" port = "PktSend" type = "Com" num = "0"/>
+        <target component = "groundInterface" port = "downlinkPort" type = "Com" num = "0"/>
+   </connection>
+   
+   <connection name = "chanTlmPkts">
+       <source component = "chanTlm" port = "PktSend" type = "Com" num = "0"/>
+        <target component = "groundInterface" port = "downlinkPort" type = "Com" num = "0"/>
+   </connection>
+
+   <connection name = "groundInterWrite">
+       <source component = "groundInterface" port = "write" type = "BufferSend" num = "0"/>
+        <target component = "serialDriver" port = "write" type = "BufferSend" num = "0"/>
+   </connection>
+
+   <connection name = "groundInterRead">
+       <source component = "groundInterface" port = "readPoll" type = "BufferSend" num = "0"/>
+        <target component = "serialDriver" port = "readPoll" type = "BufferSend" num = "0"/>
+   </connection>
+
    <!-- Fault Connectionss -->
    <!-- connection name = "eventLoggerFatalOut">
        <source component = "eventLogger" port = "FatalAnnounce" type = "FatalEvent" num = "0"/>
         <target component = "fatalHandler" port = "FatalReceive" type = "FatalEvent" num = "0"/>
    </connection -->
+   
 </assembly>

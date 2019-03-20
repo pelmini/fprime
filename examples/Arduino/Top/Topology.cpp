@@ -28,9 +28,12 @@ Svc::TlmChanImpl chanTlm("TLM");
 Svc::CommandDispatcherImpl cmdDisp("CMDDISP");
 Svc::HealthImpl health("health");
 
+Svc::GroundInterfaceComponentImpl groundInterface("GIF");
+
 // Arduino specific components
 Arduino::LedBlinkerComponentImpl ledBlinker("Blinker");
 Arduino::HardwareRateDriver hardwareRateDriver("RateDr", 100);
+Arduino::SerialDriverComponentImpl serialDriver("SDRV");
 
 // Baremetal setup for the task runner
 Os::TaskRunner taskRunner;
@@ -55,7 +58,9 @@ void constructApp() {
     chanTlm.init(10, 0);
     cmdDisp.init(20,0);
     health.init(25,0);
+    groundInterface.init(0);
     ledBlinker.init(0);
+    serialDriver.init(0);
     // Callback to initialize architecture, connect ports, etc.
     constructArduinoArchitecture();
 

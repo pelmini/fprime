@@ -17,12 +17,13 @@ void constructApp();
 #include <Svc/PrmDb/PrmDbImpl.hpp>
 #include <Fw/Obj/SimpleObjRegistry.hpp>
 #include <Svc/Health/HealthComponentImpl.hpp>
-
+#include <Svc/GroundInterface/GroundInterface.hpp>
 #include <Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.hpp>
 #include <Svc/FatalHandler/FatalHandlerComponentImpl.hpp>
 
 #include <examples/Arduino/LedBlinker/LedBlinker.hpp>
 #include <examples/Arduino/HardwareRateDriver/HardwareRateDriver.hpp>
+#include <examples/Arduino/SerialDriver/SerialDriver.hpp>
 
 //Core components. Gotta run them all
 extern Svc::RateGroupDriverImpl rateGroupDriverComp;
@@ -34,9 +35,11 @@ extern Svc::ActiveLoggerImpl eventLogger;
 extern Svc::TlmChanImpl chanTlm;
 extern Svc::CommandDispatcherImpl cmdDisp;
 //extern Svc::PrmDbImpl prmDb;
+extern Svc::GroundInterfaceComponentImpl groundInterface;
 extern Svc::AssertFatalAdapterComponentImpl fatalAdapter;
 extern Svc::FatalHandlerComponentImpl fatalHandler;
 extern Svc::HealthImpl health;
 extern Arduino::LedBlinkerComponentImpl ledBlinker;
 extern Arduino::HardwareRateDriver hardwareRateDriver;
+extern Arduino::SerialDriverComponentImpl serialDriver;
 #endif

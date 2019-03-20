@@ -4,7 +4,7 @@
 
 # derive module name from directory
 
-MODULE_DIR = Drv/Arduino/ArduinoSerialDriver
+MODULE_DIR = Svc/GroundInterface
 MODULE = $(subst /,,$(MODULE_DIR))
 
 BUILD_ROOT ?= $(subst /$(MODULE_DIR),,$(CURDIR))
@@ -13,9 +13,3 @@ export BUILD_ROOT
 include $(BUILD_ROOT)/mk/makefiles/module_targets.mk
 
 # Add module specific targets here
-
-load: ut_nocov_SDFLIGHT
-	adb push test/ut/linux-linaro-cross-arm-ut-nocov-gnu-bin/test_ut /home/linaro/uart_test_ut
-
-run_sd_ut:
-	adb shell "cd /home/linaro; uart_test_ut 0x00 0x01 0x02"
