@@ -43,7 +43,8 @@ namespace Arduino {
       ~LedBlinkerComponentImpl(void);
 
     PRIVATE:
-
+      //! Blink a given pin
+      void blink();
       // ----------------------------------------------------------------------
       // Handler implementations for user-defined typed input ports
       // ----------------------------------------------------------------------
@@ -54,8 +55,8 @@ namespace Arduino {
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           NATIVE_UINT_TYPE context /*!< The call order*/
       );
-      U32 m_counter;
-      U32 m_cap;
+      //!< Pin to blink
+      U32 m_pin;
       bool m_state;
     };
 

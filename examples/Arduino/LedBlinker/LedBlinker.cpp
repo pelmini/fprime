@@ -25,21 +25,9 @@ namespace Arduino {
 #else
     LedBlinkerComponentBase(void),
 #endif
-    m_counter(0),
-    m_cap(0),
+    m_pin(LED_PIN),
     m_state(false)
-  {
-//      pinMode(LED_PIN, OUTPUT);
-//      digitalWrite(LED_PIN, HIGH);
-  }
-
-  void LedBlinkerComponentImpl ::
-    init(
-        const NATIVE_INT_TYPE instance
-    ) 
-  {
-    LedBlinkerComponentBase::init(instance);
-  }
+  {}
 
   LedBlinkerComponentImpl ::
     ~LedBlinkerComponentImpl(void)
@@ -57,7 +45,7 @@ namespace Arduino {
         NATIVE_UINT_TYPE context
     )
   {
-	  digitalWrite(13, m_state);
+	  blink();
 	  m_state = !m_state;
   }
 
