@@ -8,6 +8,7 @@
     <import_port_type>Fw/Com/ComPortAi.xml</import_port_type>
     <import_port_type>Fw/Time/TimePortAi.xml</import_port_type>
     <import_port_type>Fw/Buffer/BufferGetPortAi.xml</import_port_type>
+    <import_port_type>Svc/Sched/SchedPortAi.xml</import_port_type>
     <import_dictionary>Svc/GndIf/Events.xml</import_dictionary>
     <ports>
     
@@ -45,6 +46,9 @@
         </port>
 
         <port name="readCallback" data_type="Fw::BufferSend" kind="sync_input" max_number="1">
+        </port>
+
+        <port name="schedIn" data_type="Svc::Sched"  kind="sync_input"    max_number="1">
         </port>
     </ports>
 </component>
