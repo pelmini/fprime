@@ -34,18 +34,17 @@ namespace Arduino {
             void stop();
             //!< Driver deconstructor
             ~HardwareRateDriver(void);
-
-        private:
+            //!< Static callback for task function
+            static void s_timer(void * comp);
             //!< Interval of the driver
             U32 m_interval;
+        private:
             //!< Last time of run
             Svc::TimerVal m_last;
             //!< Pointer to the driver
             static HardwareRateDriver* s_driver;
             //!< Static callback to the ISR triggered via a timer
             static void s_timerISR();
-            //!< Static callback for task function
-            static void s_timer(void * comp);
     };
 }
 #endif
