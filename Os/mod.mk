@@ -32,19 +32,21 @@ HDR = 			Queue.hpp \
 				ValidateFile.hpp \
 				FileSystem.hpp
 
-SRC_LINUX=      Pthreads/Queue.cpp \
+SRC_LINUX=      Baremetal/Queue.cpp \
                	Pthreads/BufferQueueCommon.cpp \
                 Pthreads/PriorityBufferQueue.cpp \
                 Pthreads/MaxHeap/MaxHeap.cpp \
 				Linux/File.cpp \
-				Posix/Task.cpp \
+				Baremetal/Task.cpp \
 				LogPrintf.cpp \
 				Linux/InterruptLock.cpp \
 				Linux/WatchdogTimer.cpp \
 				X86/IntervalTimer.cpp \
 				Linux/IntervalTimer.cpp \
 				Posix/Mutex.cpp \
-				Linux/FileSystem.cpp
+				Linux/FileSystem.cpp \
+                                Baremetal/TaskRunner/TaskRunner.cpp \
+               	Pthreads/BufferQueueCommon.cpp 
 
 SRC_DARWIN =    Pthreads/Queue.cpp \
                 Pthreads/BufferQueueCommon.cpp \
