@@ -7,7 +7,6 @@
 
 #include <examples/Arduino/SerialDriver/SerialDriver.hpp>
 #include "Fw/Types/BasicTypes.hpp"
-#include <Arduino.h>
 
 namespace Arduino {
 
@@ -28,15 +27,6 @@ namespace Arduino {
 
   }
 
-  void SerialDriverComponentImpl ::
-    init(
-        const NATIVE_INT_TYPE instance
-    ) 
-  {
-    SerialDriverComponentBase::init(instance);
-    Serial.begin(115200);
-  }
-
   SerialDriverComponentImpl ::
     ~SerialDriverComponentImpl(void)
   {
@@ -53,7 +43,7 @@ namespace Arduino {
         Fw::Buffer &fwBuffer
     )
   {
-      Serial.write(reinterpret_cast<U8*>(fwBuffer.getdata()),fwBuffer.getsize());
+      write_data(fwBuffer);
   }
 
   void SerialDriverComponentImpl ::
@@ -62,7 +52,18 @@ namespace Arduino {
         Fw::Buffer &fwBuffer
     )
   {
-    //NOPE
+      read_data(fwBuffer);
+  }
+
+  void SerialDriverComponentImpl ::
+    schedIn_handler(
+        const NATIVE_INT_TYPE portNum, /*!< The port number*/
+        NATIVE_UINT_TYPE context /*!< The call order*/
+    )
+  {
+      //TODO: ask for buffer
+      Fw::Buffer buffer;
+      read_data(buffer);
   }
 
 } // end namespace Svc

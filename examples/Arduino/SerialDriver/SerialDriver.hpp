@@ -43,6 +43,10 @@ namespace Arduino {
 
     PRIVATE:
 
+      //! Read the actual data
+      void read_data(Fw::Buffer &fwBuffer);
+      //! Write the actual data
+      void write_data(Fw::Buffer &fwBuffer);
       // ----------------------------------------------------------------------
       // Handler implementations for user-defined typed input ports
       // ----------------------------------------------------------------------
@@ -61,7 +65,12 @@ namespace Arduino {
           Fw::Buffer &fwBuffer 
       );
 
-
+      //! Handler implementation for schedIn
+      //!
+      void schedIn_handler(
+          const NATIVE_INT_TYPE portNum, /*!< The port number*/
+          NATIVE_UINT_TYPE context /*!< The call order*/
+      );
     };
 
 } // end namespace Arduino
