@@ -77,7 +77,8 @@ SVC_MINIMAL_MODULES := \
 	Svc/WatchDog \
     Svc/AssertFatalAdapter \
     Svc/FatalHandler \
-	Svc/FileManager
+	Svc/FileManager \
+        Svc/GroundInterface
 
 SVC_MODULES := \
 	Svc/BufferManager \
@@ -150,14 +151,11 @@ Ref_MODULES := \
   	\
   	$(UTILS_MODULES)
 
-#ARDUINO_DRV_MODULES := \
-#        Drv/Arduino/ArduinoSerialDriver
-#
-
 ARDUINO_REF_MODULES := \
         examples/Arduino/Top \
         examples/Arduino/HardwareRateDriver \
-        examples/Arduino/LedBlinker
+        examples/Arduino/LedBlinker \
+        examples/Arduino/SerialDriver
 
 Arduino_MODULES := \
         $(ARDUINO_REF_MODULES) \
