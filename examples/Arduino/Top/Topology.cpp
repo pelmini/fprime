@@ -6,7 +6,6 @@
 #include <Fw/Types/MallocAllocator.hpp>
 #include <examples/Arduino/Top/ArduinoSchedContexts.hpp>
 #include "../../Arduino/Top/Components.hpp"
-#include <Arduino.h>
 
 // Setup the rate group driver used to drive all the ActiveRateGroups connected to it.
 // For each active rate group, there is a rate divisor that represents how often it is run.

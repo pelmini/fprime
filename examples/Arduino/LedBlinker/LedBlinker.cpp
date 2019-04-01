@@ -8,7 +8,6 @@
 #include <examples/Arduino/LedBlinker/LedBlinker.hpp>
 #include "Fw/Types/BasicTypes.hpp"
 
-#include <Arduino.h>
 #define LED_PIN 13
 namespace Arduino {
 

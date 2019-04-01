@@ -199,7 +199,10 @@
        <source component = "rateGroup10HzComp" port = "RateGroupMemberOut" type = "Sched" num = "0"/>
        <target component = "ledBlinker" port = "schedIn" type = "Sched" num = "0"/>
    </connection>
-
+   <connection name = "groundInterfaceRg">
+       <source component = "rateGroup10HzComp" port = "RateGroupMemberOut" type = "Sched" num = "0"/>
+       <target component = "groundInterface" port = "schedIn" type = "Sched" num = "0"/>
+   </connection>
    <!-- 1Hz Rate Group -->
    <connection name = "rateGroupDriverCompRg1Hz">
        <source component = "rateGroupDriverComp" port = "CycleOut" type = "Cycle" num = "1"/>

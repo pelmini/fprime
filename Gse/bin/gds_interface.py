@@ -99,7 +99,7 @@ class TCPGDSInterface(object):
         size = struct.pack(">I", len(packet))
         data = b"A5A5 GUI %s%s" % (size, packet)
         with self.send_lock:
-            self.sock.sendall(data)
+            self.socket.sendall(data)
 
     def poll(self):
         """

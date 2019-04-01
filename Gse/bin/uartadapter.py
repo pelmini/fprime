@@ -55,9 +55,10 @@ class SerialTcp(object):
         directly off the serial port read from the tcp server.
         """
         data = self.serial.read(1024)
+        com = data[8:-4]
         if data:
-            print("Receiving", len(data), "bytes")
-            self.gds_interface.send(data)
+            print("Receiving", len(com), "bytes")
+            self.gds_interface.write(com)
 
     def run(self):
         """
