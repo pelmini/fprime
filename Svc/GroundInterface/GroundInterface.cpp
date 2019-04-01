@@ -106,6 +106,8 @@ namespace Svc {
   void GroundInterfaceComponentImpl ::
     processData(Fw::Buffer& buffer)
   {
+      U32 checksum = 0;
+      U32 recalculate = 0xfeebdaed;
       U8* pointer = reinterpret_cast<U8*>(buffer.getdata());
       // Outer loop: this portion reads the data in the incoming buffer and stops when the data
       // runs out. Any non-processed data remains in the buffer and the remaining variable tracks
@@ -129,15 +131,16 @@ namespace Svc {
           // data from this step.
           FW_ASSERT(m_remaining <= read_size, m_remaining, read_size);
           while ((read_size - m_remaining > 0) &&
-                 (pointer < reinterpret_cast<U8*>(buffer.getdata()))) {
+                 (pointer < (reinterpret_cast<U8*>(buffer.getdata()) + buffer.getsize()))) {
               m_in_buffer[m_remaining + m_in_offset] = *pointer;
               m_remaining++;
+              pointer += 1;
           }
           // Return if not enough data yet
           if ((read_size - m_remaining) > 0) {
               return;
           }
-          m_in_wrapper.setBuffLen(m_in_offset + m_remaining);
+          m_in_wrapper.setBuff(m_in_buffer + m_in_offset, m_remaining);
           // Process the data based on the state. If we are in the start phase, scan for the start
           // token. In size state, read the size, data state, copy the data, and in the check state
           // read the checksum for comparison.
@@ -185,7 +188,6 @@ namespace Svc {
                   break;
               case CHECK:
                   // Read the checksum
-                  U32 checksum;
                   m_in_wrapper.deserialize(checksum);
                   // Regardless of success, we will reset here in preparation for the next message.
                   // Checksum failures forfeit previous data.
@@ -193,12 +195,15 @@ namespace Svc {
                   m_in_offset  = 0;
                   m_remaining =  m_remaining - sizeof(checksum);
                   //Recalculate the checksum and ensure it is correct in order to send the data out
-                  U32 recalculate = 0xfeebdaed;
                   if (checksum == recalculate) {
                       Fw::ComBuffer com;
-                      com.setBuff(m_in_buffer + 2  * sizeof(TOKEN_TYPE), m_data_size);
+                      com.setBuff(m_in_buffer + sizeof(TOKEN_TYPE) + sizeof(TOKEN_TYPE), m_data_size);
                       uplinkPort_out(0, com, 0);
                   }
+                  break;
+              default:
+                  FW_ASSERT(0, m_state);
+                  break;
           }
       }
   }

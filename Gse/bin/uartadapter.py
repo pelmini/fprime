@@ -1,6 +1,7 @@
 from __future__ import print_function
 import sys
 import time
+import struct
 import argparse
 import serial
 
@@ -31,7 +32,7 @@ class SerialTcp(object):
         """
         self.serial = serial.Serial(self.device, self.baud, timeout=0)
         self.gds_interface.open()
-        print("[INFO[ Opened socket and device.")
+        print("[INFO] Opened socket and device.")
 
     def close(self):
         """
@@ -46,8 +47,12 @@ class SerialTcp(object):
         directly off a socket read from the tcp server.
         :param data: data to send to the UART socket
         """
-        print("Sending", len(data), "bytes")
-        self.serial.write(data)
+        sending = struct.pack(">I", 0xdeadbeef);
+        sending += struct.pack(">I", len(data));
+        sending += data
+        print(" ".join(["{0:02x}".format(ord(byte)) for byte in data]))
+        sending += struct.pack(">I", 0xfeebdaed);
+        self.serial.write(sending)
 
     def from_uart(self):
         """
@@ -57,7 +62,6 @@ class SerialTcp(object):
         data = self.serial.read(1024)
         com = data[8:-4]
         if data:
-            print("Receiving", len(com), "bytes")
             self.gds_interface.write(com)
 
     def run(self):
