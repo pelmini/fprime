@@ -7,11 +7,12 @@
 
 #include <examples/Arduino/SerialDriver/SerialDriver.hpp>
 #include "Fw/Types/BasicTypes.hpp"
+#include <string.h>
 #include <fcntl.h>
 #include <unistd.h>
 
-int fd = -1;
-#define SERIAL_FILE_LINUX "/dev/pts/20"
+#define SERIAL_FILE_LINUX_TMPL "/dev/pts/%d"
+
 namespace Arduino {
 
   void SerialDriverComponentImpl ::
@@ -20,10 +21,12 @@ namespace Arduino {
     ) 
   {
     SerialDriverComponentBase::init(instance);
-    fd = open(SERIAL_FILE_LINUX, O_RDWR);
-    int flags = fcntl(fd, F_GETFL, 0);
-    fcntl(fd, F_SETFL, flags | O_NONBLOCK);
-
+    char name[1024];
+    snprintf(name, 1024, SERIAL_FILE_LINUX_TMPL, m_port_number + 20);
+    printf("Opening serial port: '%s'\n", name);
+    m_port_pointer = open(name, O_RDWR);
+    int flags = fcntl(m_port_pointer, F_GETFL, 0);
+    fcntl(m_port_pointer, F_SETFL, flags | O_NONBLOCK);
   }
 
   // ----------------------------------------------------------------------
@@ -35,8 +38,8 @@ namespace Arduino {
         Fw::Buffer &fwBuffer
     )
   {
-      if (fd != -1) {
-          write(fd, reinterpret_cast<U8*>(fwBuffer.getdata()),fwBuffer.getsize());
+      if (m_port_pointer != -1) {
+          write(m_port_pointer, reinterpret_cast<U8*>(fwBuffer.getdata()),fwBuffer.getsize());
       }
   }
 
@@ -44,14 +47,11 @@ namespace Arduino {
     read_data(Fw::Buffer &fwBuffer)
   {
       NATIVE_INT_TYPE result;
-      if ((fd != -1) && (-1 != (result = read(fd, reinterpret_cast<U8*>(fwBuffer.getdata()), 1/*fwBuffer.getsize()*/)))) {
+      if ((m_port_pointer != -1) && (-1 != (result = read(m_port_pointer, reinterpret_cast<U8*>(fwBuffer.getdata()), fwBuffer.getsize())))) {
           fwBuffer.setsize(result);
       }
       else {
           fwBuffer.setsize(0);
       }
   }
-
-
-
 } // end namespace Svc

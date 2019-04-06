@@ -35,7 +35,6 @@ NATIVE_UINT_TYPE CircularBuffer :: get_remaining_size(bool serialization) {
             // Non-nominal case, subtract to get remaining
             (reinterpret_cast<POINTER_CAST>(m_head) -
              reinterpret_cast<POINTER_CAST>(m_tail) - 1);
-    // When serializing, return remaining. Deserialization gets the opposite
     return serialization ? remaining : m_size - 1 - remaining;
 }
 
@@ -43,7 +42,10 @@ U8* CircularBuffer :: increment(U8* const pointer, NATIVE_UINT_TYPE amount) {
     U8* ret = pointer;
     //TODO: need O(1) implementation here
     for (NATIVE_UINT_TYPE i = 0; i < amount; i++) {
-        ret = (ret >= (m_store + m_size)) ? m_store : ret + 1;
+        ret = ret + 1;
+        if (ret >= (m_store + m_size)) {
+            ret = m_store;
+        }
     }
     return ret;
 }
@@ -84,7 +86,6 @@ Fw::SerializeStatus CircularBuffer :: peek(U32& value, NATIVE_UINT_TYPE offset) 
         value = (value << 8) | static_cast<U32>(*peeker);
         peeker = increment(peeker);
     }
-    printf("\n");
     return Fw::FW_SERIALIZE_OK;
 }
 

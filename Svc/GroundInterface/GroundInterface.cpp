@@ -9,7 +9,6 @@
 #include <Svc/GroundInterface/CircularBuffer.hpp>
 #include "Fw/Types/BasicTypes.hpp"
 #include <string.h>
-
 namespace Svc {
 
   // ----------------------------------------------------------------------
@@ -99,6 +98,7 @@ namespace Svc {
       Fw::Buffer buffer = m_ext_buffer;
       readPoll_out(0, buffer);
       processBuffer(buffer);
+
   }
 
   void GroundInterfaceComponentImpl ::

@@ -25,10 +25,9 @@ namespace Arduino {
       //!
       SerialDriverComponentImpl(
 #if FW_OBJECT_NAMES == 1
-          const char *const compName /*!< The component name*/
-#else
-          void
+          const char *const compName, /*!< The component name*/
 #endif
+          NATIVE_UINT_TYPE portNumber
       );
 
       //! Initialize object SerialDriver
@@ -42,6 +41,10 @@ namespace Arduino {
       ~SerialDriverComponentImpl(void);
 
     PRIVATE:
+      //! Port number to open
+      NATIVE_UINT_TYPE m_port_number;
+      //! Stores the open serial port, POINTER_CAST so Linux and Ardunio may use different types
+      POINTER_CAST m_port_pointer;
 
       //! Read the actual data
       void read_data(Fw::Buffer &fwBuffer);

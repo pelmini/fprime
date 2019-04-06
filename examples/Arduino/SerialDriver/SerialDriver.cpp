@@ -15,14 +15,15 @@ namespace Arduino {
   // ----------------------------------------------------------------------
 
   SerialDriverComponentImpl ::
-#if FW_OBJECT_NAMES == 1
     SerialDriverComponentImpl(
-        const char *const compName
-    ) :
-      SerialDriverComponentBase(compName)
-#else
-    SerialDriverImpl(void)
+#if FW_OBJECT_NAMES == 1
+        const char *const compName,
 #endif
+        NATIVE_UINT_TYPE portNum
+    ) :
+      SerialDriverComponentBase(compName),
+      m_port_number(portNum),
+      m_port_pointer(static_cast<POINTER_CAST>(NULL))
   {
 
   }

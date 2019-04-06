@@ -18,7 +18,7 @@ namespace Arduino {
   {
     LedBlinkerComponentBase::init(instance);
     pinMode(m_pin, OUTPUT);
-    digitalWrite(m_pin, HIGH);
+
   }
 
   void LedBlinkerComponentImpl ::

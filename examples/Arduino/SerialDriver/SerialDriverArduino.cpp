@@ -17,7 +17,19 @@ namespace Arduino {
     )
   {
       SerialDriverComponentBase::init(instance);
-      Serial.begin(115200);
+      switch (m_port_number) {
+          case 0:
+              m_port_pointer = reinterpret_cast<POINTER_CAST>(&Serial);
+              break;
+          case 1:
+              m_port_pointer = reinterpret_cast<POINTER_CAST>(&Serial1);
+              break;
+          case 2:
+              m_port_pointer = reinterpret_cast<POINTER_CAST>(&Serial2);
+              break;
+      }
+      reinterpret_cast<HardwareSerial*>(m_port_pointer)->begin(115200);
+      reinterpret_cast<HardwareSerial*>(m_port_pointer)->setTimeout(10);
   }
 
 
@@ -36,14 +48,10 @@ namespace Arduino {
   void SerialDriverComponentImpl ::
     read_data(Fw::Buffer& fwBuffer)
   {
-      U32 i = 0;
-      int read = 0;
-      for (i = 0; i < fwBuffer.getsize() && read != -1; i++) {
-          read = Serial.read();
-          if (read != -1) {
-              reinterpret_cast<U8*>(fwBuffer.getdata())[i] = static_cast<U8>(read);
-          }
-      }
-      fwBuffer.setsize(i);
+
+
+      NATIVE_UINT_TYPE read = reinterpret_cast<HardwareSerial*>(m_port_pointer)->
+                              readBytes(reinterpret_cast<U8*>(fwBuffer.getdata()), fwBuffer.getsize());
+      fwBuffer.setsize(read);
   }
 } // end namespace Svc

@@ -32,7 +32,7 @@ Svc::GroundInterfaceComponentImpl groundInterface("GIF");
 // Arduino specific components
 Arduino::LedBlinkerComponentImpl ledBlinker("Blinker");
 Arduino::HardwareRateDriver hardwareRateDriver("RateDr", 100);
-Arduino::SerialDriverComponentImpl serialDriver("SDRV");
+Arduino::SerialDriverComponentImpl serialDriver("SDRV", 0);
 
 // Baremetal setup for the task runner
 Os::TaskRunner taskRunner;
@@ -87,7 +87,7 @@ void constructApp() {
     eventLogger.start(0, 98, 10 * 1024);
     chanTlm.start(0, 97, 10 * 1024);
     // Start the task for the rate group
-    Fw::EightyCharString rgTaskName("RG_TASK");
+//    Fw::EightyCharString rgTaskName("RG_TASK");
 //    rgTask.start(rgTaskName, 0xDEAF, 121, 0, hertzRunner, &rgTask, 0);
     taskRunner.run();
 }
