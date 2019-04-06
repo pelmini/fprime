@@ -96,8 +96,7 @@ class TCPGDSInterface(object):
         Write a packet out to the tcp socket server
         :param packet: bytes object of data to write out to the socket server
         """
-        size = struct.pack(">I", len(packet))
-        data = b"A5A5 GUI %s%s" % (size, packet)
+        data = b"A5A5 GUI %s" % (packet)
         with self.send_lock:
             self.socket.sendall(data)
 

@@ -25,6 +25,7 @@ class SerialTcp(object):
         self.baud = baud
         self.gds_interface = gds_interface.TCPGDSInterface(address, port)
         self.gds_interface.register(self.to_uart)
+        self.down = b""
 
     def open(self):
         """
@@ -48,10 +49,9 @@ class SerialTcp(object):
         :param data: data to send to the UART socket
         """
         sending = struct.pack(">I", 0xdeadbeef);
-        sending += struct.pack(">I", len(data));
         sending += data
-        print(" ".join(["{0:02x}".format(ord(byte)) for byte in data]))
-        sending += struct.pack(">I", 0xfeebdaed);
+        print("[OUT]", " ".join(["{0:02x}".format(ord(byte)) for byte in data]))
+        sending += struct.pack(">I", 0xcafecafe);
         self.serial.write(sending)
 
     def from_uart(self):
@@ -60,9 +60,30 @@ class SerialTcp(object):
         directly off the serial port read from the tcp server.
         """
         data = self.serial.read(1024)
-        com = data[8:-4]
         if data:
-            self.gds_interface.write(com)
+            self.process_down(data)
+
+    def process_down(self, data):
+        """
+        Process the down data.
+        :param data: array of data to process
+        """
+        header_size = 8
+        self.down += data
+        while len(self.down) >= header_size:
+            start, data_size = struct.unpack_from(">II", self.down)
+            total_size = header_size + data_size + 4
+            if start != 0xdeadbeef or data_size >= 1024:
+                self.down = self.down[1:]
+                continue
+            elif len(self.down) >= total_size:
+                com, check = struct.unpack_from(">{0}sI".format(data_size + header_size - 4), self.down, 4)
+                if check == 0xcafecafe:
+                    print("[IN] ", " ".join(["{0:02x}".format(ord(byte)) for byte in com]))
+                    self.down = self.down[total_size:]
+                    self.gds_interface.write(com)
+                else:
+                    self.down = self.down[1:]
 
     def run(self):
         """

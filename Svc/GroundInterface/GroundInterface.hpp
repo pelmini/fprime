@@ -9,32 +9,29 @@
 
 #define GND_BUFFER_SIZE 512
 #define TOKEN_TYPE U32
+#define HEADER_SIZE (3 * sizeof(TOKEN_TYPE))
 
 #include "Svc/GroundInterface/GroundInterfaceComponentAc.hpp"
-
+#include "Svc/GroundInterface/CircularBuffer.hpp"
 namespace Svc {
 
   class GroundInterfaceComponentImpl :
     public GroundInterfaceComponentBase
   {
-
     public:
       /**
-       * ProcessingState:
+       * DataType:
        *
-       * State of the processing of incoming data.
+       * Type of data in the buffer being processed. Used to route the out-going data
+       * to the correct port.
        */
-      enum ProcessingState {
-          START, //! Searching for a start-bit
-          SIZE,  //! Reading 4 byte size
-          DATA,  //! Reading all data
-          CHECK, //! Reading 4 byte checksum
-          MAX_PROCESSING_STATE
+      enum DataType {
+          COMMAND_TYPE = 0x5a5a5a5a, //! Set to be backwards compatible with old GSE
+          MAX_DATA_TYPE = 0xDEAD4EAD
       };
-
       static const U32 MAX_DATA_SIZE = 2048;
       static const TOKEN_TYPE START_WORD = static_cast<TOKEN_TYPE>(0xdeadbeef);
-
+      static const TOKEN_TYPE END_WORD = static_cast<TOKEN_TYPE>(0xcafecafe);
       // ----------------------------------------------------------------------
       // Construction, initialization, and destruction
       // ----------------------------------------------------------------------
@@ -93,20 +90,23 @@ namespace Svc {
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           NATIVE_UINT_TYPE context /*!< The call order*/
       );
+      //! Processes the out-going data into coms order
+      void routeComData();
+
+      //! Process all the data in the ring
+      void processRing();
 
       //! Process a data buffer containing a read from the serial port
-      void processData(Fw::Buffer& data /*!< Data to process */);
+      void processBuffer(Fw::Buffer& data /*!< Data to process */);
 
       // Output variables
       Fw::Buffer m_ext_buffer;
       U8 m_buffer[GND_BUFFER_SIZE];
-      // Input variables used when reading/processing
-      Fw::ExternalSerializeBuffer m_in_wrapper;
-      ProcessingState m_state; //!< Processing state for incoming data
-      NATIVE_UINT_TYPE m_remaining; //!< Data remaining in the input buffer
-      NATIVE_UINT_TYPE m_in_offset; //!< Offset into in-buffer where reading occurs
+      // Input variables
       TOKEN_TYPE m_data_size; //!< Data size expected in incoming data
+      DataType m_data_type; //!< Type of data being read
       U8 m_in_buffer[GND_BUFFER_SIZE];
+      Types::CircularBuffer m_in_ring;
     };
 
 } // end namespace Svc

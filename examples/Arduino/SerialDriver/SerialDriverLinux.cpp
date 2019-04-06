@@ -11,7 +11,7 @@
 #include <unistd.h>
 
 int fd = -1;
-#define SERIAL_FILE_LINUX "/dev/pts/3"
+#define SERIAL_FILE_LINUX "/dev/pts/20"
 namespace Arduino {
 
   void SerialDriverComponentImpl ::
@@ -44,9 +44,8 @@ namespace Arduino {
     read_data(Fw::Buffer &fwBuffer)
   {
       NATIVE_INT_TYPE result;
-      if ((fd != -1) && (-1 != (result = read(fd, reinterpret_cast<U8*>(fwBuffer.getdata()), fwBuffer.getsize())))) {
+      if ((fd != -1) && (-1 != (result = read(fd, reinterpret_cast<U8*>(fwBuffer.getdata()), 1/*fwBuffer.getsize()*/)))) {
           fwBuffer.setsize(result);
-	  printf("Read: %d bytes\n", fwBuffer.getsize());
       }
       else {
           fwBuffer.setsize(0);
