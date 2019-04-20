@@ -48,7 +48,8 @@ CFDP_GTEST_MODULES := \
 	CFDP/Checksum/GTest
 	
 UTILS_MODULES := \
-	Utils/Hash
+	Utils/Hash \
+	Utils/Types
         
 SVC_MINIMAL_MODULES := \
 	Svc/BufferManager \
@@ -155,6 +156,7 @@ ARDUINO_REF_MODULES := \
         examples/Arduino/Top \
         examples/Arduino/HardwareRateDriver \
         examples/Arduino/LedBlinker \
+        examples/Arduino/Gps \
         examples/Arduino/SerialDriver
 
 Arduino_MODULES := \

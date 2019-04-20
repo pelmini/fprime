@@ -4,6 +4,8 @@
 // \brief  hpp file for GroundInterface component implementation class
 // ====================================================================== 
 #include <Fw/Types/Serializable.hpp>
+#include "Svc/GroundInterface/GroundInterfaceComponentAc.hpp"
+#include "Utils/Types/CircularBuffer.hpp"
 #ifndef GroundInterface_HPP
 #define GroundInterface_HPP
 
@@ -11,8 +13,6 @@
 #define TOKEN_TYPE U32
 #define HEADER_SIZE (3 * sizeof(TOKEN_TYPE))
 
-#include "Svc/GroundInterface/GroundInterfaceComponentAc.hpp"
-#include "Svc/GroundInterface/CircularBuffer.hpp"
 namespace Svc {
 
   class GroundInterfaceComponentImpl :
@@ -99,7 +99,7 @@ namespace Svc {
       //! Process a data buffer containing a read from the serial port
       void processBuffer(Fw::Buffer& data /*!< Data to process */);
 
-      // Output variables
+      // Basic data movement variables
       Fw::Buffer m_ext_buffer;
       U8 m_buffer[GND_BUFFER_SIZE];
       // Input variables

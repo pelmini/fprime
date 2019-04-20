@@ -8,6 +8,8 @@
 #include <examples/Arduino/SerialDriver/SerialDriver.hpp>
 #include "Fw/Types/BasicTypes.hpp"
 
+#include <Arduino.h>
+
 namespace Arduino {
 
   // ----------------------------------------------------------------------
@@ -23,7 +25,8 @@ namespace Arduino {
     ) :
       SerialDriverComponentBase(compName),
       m_port_number(portNum),
-      m_port_pointer(static_cast<POINTER_CAST>(NULL))
+      m_port_pointer(static_cast<POINTER_CAST>(NULL)),
+      m_local_buffer(0xfeedfeed, 0xdeeddeed, reinterpret_cast<POINTER_CAST>(m_data), SERIAL_BUFFER_SIZE)
   {
 
   }
@@ -62,9 +65,11 @@ namespace Arduino {
         NATIVE_UINT_TYPE context /*!< The call order*/
     )
   {
-      //TODO: ask for buffer
-      Fw::Buffer buffer;
-      read_data(buffer);
+      m_local_buffer.setsize(SERIAL_BUFFER_SIZE);
+      read_data(m_local_buffer);
+      if (m_local_buffer.getsize() > 0) {
+          readCallback_out(0, m_local_buffer);
+      }
   }
 
 } // end namespace Svc

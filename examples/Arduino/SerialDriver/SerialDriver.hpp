@@ -16,7 +16,7 @@ namespace Arduino {
   {
 
     public:
-
+      const static NATIVE_UINT_TYPE SERIAL_BUFFER_SIZE = 100; //115200 / 10 / 10 + 1;
       // ----------------------------------------------------------------------
       // Construction, initialization, and destruction
       // ----------------------------------------------------------------------
@@ -33,7 +33,8 @@ namespace Arduino {
       //! Initialize object SerialDriver
       //!
       void init(
-          const NATIVE_INT_TYPE instance = 0 /*!< The instance number*/
+          const NATIVE_INT_TYPE instance, /*!< The instance number*/
+          const NATIVE_UINT_TYPE baud
       );
 
       //! Destroy object SerialDriver
@@ -41,11 +42,6 @@ namespace Arduino {
       ~SerialDriverComponentImpl(void);
 
     PRIVATE:
-      //! Port number to open
-      NATIVE_UINT_TYPE m_port_number;
-      //! Stores the open serial port, POINTER_CAST so Linux and Ardunio may use different types
-      POINTER_CAST m_port_pointer;
-
       //! Read the actual data
       void read_data(Fw::Buffer &fwBuffer);
       //! Write the actual data
@@ -74,6 +70,15 @@ namespace Arduino {
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           NATIVE_UINT_TYPE context /*!< The call order*/
       );
+
+      //! Port number to open
+      NATIVE_UINT_TYPE m_port_number;
+      //! Stores the open serial port, POINTER_CAST so Linux and Ardunio may use different types
+      POINTER_CAST m_port_pointer;
+      //! Data store for self-generated serial data
+      U8 m_data[SERIAL_BUFFER_SIZE]; // Max data in 1/10th second at 115200
+      //! Buffer to wrap
+      Fw::Buffer m_local_buffer;
     };
 
 } // end namespace Arduino

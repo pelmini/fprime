@@ -109,7 +109,7 @@ SRC_TEENSY32 =  Baremetal/Queue.cpp \
 				Baremetal/TaskRunner/TaskRunner.cpp \
                	Pthreads/BufferQueueCommon.cpp \
                 Pthreads/FIFOBufferQueue.cpp \
-                LogPrintf.cpp
+                Arduino/StreamLog.cpp
 
 #				Linux/File.cpp \
 #				LogPrintf.cpp \

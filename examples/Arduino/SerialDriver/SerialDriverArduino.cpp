@@ -13,7 +13,8 @@ namespace Arduino {
 
   void SerialDriverComponentImpl ::
     init(
-        const NATIVE_INT_TYPE instance
+        const NATIVE_INT_TYPE instance,
+        const NATIVE_UINT_TYPE baud
     )
   {
       SerialDriverComponentBase::init(instance);
@@ -27,8 +28,11 @@ namespace Arduino {
           case 2:
               m_port_pointer = reinterpret_cast<POINTER_CAST>(&Serial2);
               break;
+          case 3:
+              m_port_pointer = reinterpret_cast<POINTER_CAST>(&Serial3);
+              break;
       }
-      reinterpret_cast<HardwareSerial*>(m_port_pointer)->begin(115200);
+      reinterpret_cast<HardwareSerial*>(m_port_pointer)->begin(baud);
       reinterpret_cast<HardwareSerial*>(m_port_pointer)->setTimeout(10);
   }
 
@@ -42,7 +46,7 @@ namespace Arduino {
         Fw::Buffer &fwBuffer
     )
   {
-      Serial.write(reinterpret_cast<U8*>(fwBuffer.getdata()),fwBuffer.getsize());
+      //Serial.write(reinterpret_cast<U8*>(fwBuffer.getdata()),fwBuffer.getsize());
   }
 
   void SerialDriverComponentImpl ::

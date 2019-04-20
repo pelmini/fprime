@@ -6,7 +6,6 @@
 
 
 #include <Svc/GroundInterface/GroundInterface.hpp>
-#include <Svc/GroundInterface/CircularBuffer.hpp>
 #include "Fw/Types/BasicTypes.hpp"
 #include <string.h>
 namespace Svc {

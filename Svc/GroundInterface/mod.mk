@@ -1,6 +1,4 @@
 SRC = GroundInterfaceComponentAi.xml \
-      GroundInterface.cpp \
-      CircularBuffer.cpp
+      GroundInterface.cpp
 
-HDR = GroundInterface.hpp \
-      CircularBuffer.hpp	
+HDR = GroundInterface.hpp	

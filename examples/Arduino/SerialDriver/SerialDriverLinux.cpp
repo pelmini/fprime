@@ -17,7 +17,8 @@ namespace Arduino {
 
   void SerialDriverComponentImpl ::
     init(
-        const NATIVE_INT_TYPE instance
+        const NATIVE_INT_TYPE instance,
+        const NATIVE_UINT_TYPE baud
     ) 
   {
     SerialDriverComponentBase::init(instance);

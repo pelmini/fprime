@@ -24,6 +24,8 @@ void constructApp();
 #include <examples/Arduino/LedBlinker/LedBlinker.hpp>
 #include <examples/Arduino/HardwareRateDriver/HardwareRateDriver.hpp>
 #include <examples/Arduino/SerialDriver/SerialDriver.hpp>
+// GPS interaction
+#include <examples/Arduino/Gps/GpsComponentImpl.hpp>
 
 //Core components. Gotta run them all
 extern Svc::RateGroupDriverImpl rateGroupDriverComp;
@@ -42,4 +44,6 @@ extern Svc::HealthImpl health;
 extern Arduino::LedBlinkerComponentImpl ledBlinker;
 extern Arduino::HardwareRateDriver hardwareRateDriver;
 extern Arduino::SerialDriverComponentImpl serialDriver;
+extern Arduino::SerialDriverComponentImpl gpsSerialDriver;
+extern Gps::GpsComponentImpl gps;
 #endif

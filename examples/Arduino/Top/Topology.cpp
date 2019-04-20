@@ -33,6 +33,9 @@ Svc::GroundInterfaceComponentImpl groundInterface("GIF");
 Arduino::LedBlinkerComponentImpl ledBlinker("Blinker");
 Arduino::HardwareRateDriver hardwareRateDriver("RateDr", 100);
 Arduino::SerialDriverComponentImpl serialDriver("SDRV", 0);
+Arduino::SerialDriverComponentImpl gpsSerialDriver("SDRV", 2);
+
+Gps::GpsComponentImpl gps("GPS");
 
 // Baremetal setup for the task runner
 Os::TaskRunner taskRunner;
@@ -54,12 +57,14 @@ void constructApp() {
 
     // Initialize the core data handling components
     eventLogger.init(10, 0);
-    chanTlm.init(10, 0);
-    cmdDisp.init(20,0);
+    chanTlm.init(20, 0);
+    cmdDisp.init(10,0);
     health.init(25,0);
     groundInterface.init(0);
     ledBlinker.init(0);
-    serialDriver.init(0);
+    serialDriver.init(0, 115200);
+    gpsSerialDriver.init(0, 9600);
+    gps.init(0);
     // Callback to initialize architecture, connect ports, etc.
     constructArduinoArchitecture();
 
@@ -67,6 +72,7 @@ void constructApp() {
     cmdDisp.regCommands();
     eventLogger.regCommands();
     health.regCommands();
+    gps.regCommands();
 
     // Setup the health an ping entries. These need to be in the same order as the
     // ports connected to the health component. Once the ping entry array is created
@@ -86,10 +92,10 @@ void constructApp() {
     cmdDisp.start(0, 101, 10 * 1024);
     eventLogger.start(0, 98, 10 * 1024);
     chanTlm.start(0, 97, 10 * 1024);
+
     // Start the task for the rate group
-//    Fw::EightyCharString rgTaskName("RG_TASK");
-//    rgTask.start(rgTaskName, 0xDEAF, 121, 0, hertzRunner, &rgTask, 0);
     taskRunner.run();
+    Os::Log::logMsg("System Started.\n", 0, 0, 0, 0, 0, 0);
 }
 /**
  * Exit Tasks:

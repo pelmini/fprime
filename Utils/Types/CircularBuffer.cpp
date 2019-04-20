@@ -12,7 +12,7 @@
  */
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <Svc/GroundInterface/CircularBuffer.hpp>
+#include <Utils/Types/CircularBuffer.hpp>
 
 #include <stdio.h>
 
@@ -66,6 +66,25 @@ Fw::SerializeStatus CircularBuffer :: serialize(const U8* const buffer, const NA
         FW_ASSERT(m_tail != m_head,
                 reinterpret_cast<POINTER_CAST>(m_tail),
                 reinterpret_cast<POINTER_CAST>(m_head));
+    }
+    return Fw::FW_SERIALIZE_OK;
+}
+
+Fw::SerializeStatus CircularBuffer :: peek(U8& value, NATIVE_UINT_TYPE offset) {
+    // Check that the head and tail pointers are consistent
+    ASSERT_CONSISTENT(m_store, m_size, m_head);
+    ASSERT_CONSISTENT(m_store, m_size, m_tail);
+    // Check there is sufficient data
+    if (sizeof(U8) > get_remaining_size(false)) {
+        return Fw::FW_DESERIALIZE_BUFFER_EMPTY;
+    }
+    U8* peeker = m_head;
+    value = 0;
+    peeker = increment(peeker, offset);
+    // Deserialize all the bytes from network format
+    for (NATIVE_UINT_TYPE i = 0; i < sizeof(U8); i++) {
+        value = (value << 8) | static_cast<U8>(*peeker);
+        peeker = increment(peeker);
     }
     return Fw::FW_SERIALIZE_OK;
 }

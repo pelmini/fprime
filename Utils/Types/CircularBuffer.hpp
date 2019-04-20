@@ -51,6 +51,16 @@ class CircularBuffer {
 
         /**
          * Deserialize data into the given variable without moving the head pointer
+         * \param U8& value: value to fill
+         */
+        Fw::SerializeStatus peek(char& value, NATIVE_UINT_TYPE offset = 0);
+        /**
+         * Deserialize data into the given variable without moving the head pointer
+         * \param U8& value: value to fill
+         */
+        Fw::SerializeStatus peek(U8& value, NATIVE_UINT_TYPE offset = 0);
+        /**
+         * Deserialize data into the given variable without moving the head pointer
          * \param U32& value: value to fill
          */
         Fw::SerializeStatus peek(U32& value, NATIVE_UINT_TYPE offset = 0);
