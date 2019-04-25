@@ -39,8 +39,9 @@ namespace Os {
         char message[128];
         // If stream is defined, then write to it.
         if (A_STREAM != NULL) {
-            snprintf(message, sizeof(message), format, a1, a2, a3, a4, a5, a6);
-            A_STREAM->write(message, sizeof(message));
+            U32 used = snprintf(message, sizeof(message), format, a1, a2, a3, a4, a5, a6);
+	    used = (used > sizeof(message)) ? sizeof(message) : used;
+            A_STREAM->write(message, used);
         }
     }
 }

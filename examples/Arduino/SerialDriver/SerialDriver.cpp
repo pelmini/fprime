@@ -8,8 +8,6 @@
 #include <examples/Arduino/SerialDriver/SerialDriver.hpp>
 #include "Fw/Types/BasicTypes.hpp"
 
-#include <Arduino.h>
-
 namespace Arduino {
 
   // ----------------------------------------------------------------------

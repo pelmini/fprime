@@ -11,7 +11,6 @@
 #include <examples/Arduino/Gps/GpsComponentImpl.hpp>
 #include "Fw/Types/BasicTypes.hpp"
 #include <cstdlib>
-#include <Arduino.h>
 
 #include <stdint.h>
 namespace Gps {
