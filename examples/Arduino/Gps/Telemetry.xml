@@ -51,9 +51,18 @@
 
   <channel
     id="4"
-    name="Gps_Mangled"
+    name="Gps_PacketCount"
     data_type="U32"
     abbrev="GPS-0004"
+    update="on_change"
+  >
+    <comment>The current number of good messages</comment>
+  </channel>
+  <channel
+    id="5"
+    name="Gps_Mangled"
+    data_type="U32"
+    abbrev="GPS-0005"
     update="on_change"
   >
     <comment>The current number of mangled messages</comment>

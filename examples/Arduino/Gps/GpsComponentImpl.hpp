@@ -13,9 +13,9 @@
 #include "Utils/Types/CircularBuffer.hpp"
 #include "examples/Arduino/Gps/GpsComponentAc.hpp"
 
-#define GP_HEADER_LENGTH 6
-#define GPGGA_LENGTH 68
-#define GP_BUFF_SIZE ((9600 * 11)/(10 * 10)) // 9600bps every second. Up to 11 calls to fill.
+#define GP_HEADER_LENGTH 5
+#define GPGGA_LENGTH 82
+#define GP_BUFF_SIZE ((9600 * 11)/(10*10)) // 9600bps every second. Up to 11 calls to fill.
 
 namespace Gps {
 
@@ -110,6 +110,8 @@ namespace Gps {
       U8 m_in_buffer[GP_BUFF_SIZE];
       //!< Ring buffer to hold the incoming data
       Types::CircularBuffer m_in_ring;
+      //!< Good message count
+      U32 m_good;
       //!< Mangled message count
       U32 m_mangled;
       //!< Is the GPS UART setup

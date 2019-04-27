@@ -19,8 +19,6 @@ Svc::ActiveRateGroupImpl rateGroup10HzComp("RG10Hz",rg10HzContext,FW_NUM_ARRAY_E
 static NATIVE_UINT_TYPE rg1HzContext[] = {0, 0, Arduino::CONTEXT_RPI_DEMO_1Hz, 0};
 Svc::ActiveRateGroupImpl rateGroup1HzComp("RG1Hz",rg1HzContext,FW_NUM_ARRAY_ELEMENTS(rg1HzContext));
 
-// Initialize the rate-group spinning task
-Os::Task rgTask;
 // Standard system components
 Svc::ActiveLoggerImpl eventLogger("ELOG");
 Svc::TlmChanImpl chanTlm("TLM");
@@ -92,10 +90,9 @@ void constructApp() {
     cmdDisp.start(0, 101, 10 * 1024);
     eventLogger.start(0, 98, 10 * 1024);
     chanTlm.start(0, 97, 10 * 1024);
-
+    Os::Log::logMsg("[SETUP] Lanuching rate groups\n", 0, 0, 0, 0, 0, 0);
     // Start the task for the rate group
     taskRunner.run();
-    Os::Log::logMsg("System Started.\n", 0, 0, 0, 0, 0, 0);
 }
 /**
  * Exit Tasks:

@@ -8,6 +8,7 @@
 #include <examples/Arduino/SerialDriver/SerialDriver.hpp>
 #include "Fw/Types/BasicTypes.hpp"
 #include <Arduino.h>
+#include <Os/Log.hpp>
 
 namespace Arduino {
 
@@ -33,7 +34,7 @@ namespace Arduino {
               break;
       }
       reinterpret_cast<HardwareSerial*>(m_port_pointer)->begin(baud);
-      reinterpret_cast<HardwareSerial*>(m_port_pointer)->setTimeout(10);
+      reinterpret_cast<HardwareSerial*>(m_port_pointer)->setTimeout(1);
   }
 
 
@@ -46,14 +47,12 @@ namespace Arduino {
         Fw::Buffer &fwBuffer
     )
   {
-      //Serial.write(reinterpret_cast<U8*>(fwBuffer.getdata()),fwBuffer.getsize());
+      Serial.write(reinterpret_cast<U8*>(fwBuffer.getdata()),fwBuffer.getsize());
   }
 
   void SerialDriverComponentImpl ::
     read_data(Fw::Buffer& fwBuffer)
   {
-
-
       NATIVE_UINT_TYPE read = reinterpret_cast<HardwareSerial*>(m_port_pointer)->
                               readBytes(reinterpret_cast<U8*>(fwBuffer.getdata()), fwBuffer.getsize());
       fwBuffer.setsize(read);

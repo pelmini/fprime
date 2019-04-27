@@ -7,6 +7,7 @@
  *  Created on: April 13th, 2019
  *      Author: mstarch
  */
+#include <Fw/Types/Generic/GenericLogAssert.hpp>
 #include <Os/Log.hpp>
 
 #if FW_ASSERT_LEVEL == FW_NO_ASSERT

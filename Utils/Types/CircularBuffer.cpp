@@ -14,6 +14,10 @@
 #include <Fw/Types/Assert.hpp>
 #include <Utils/Types/CircularBuffer.hpp>
 
+#ifdef CIRCULAR_DEBUG
+    #include <Os/Log.hpp>
+#endif
+
 #include <stdio.h>
 
 
@@ -29,12 +33,9 @@ CircularBuffer :: CircularBuffer(U8* const buffer, const NATIVE_UINT_TYPE size) 
 NATIVE_UINT_TYPE CircularBuffer :: get_remaining_size(bool serialization) {
     // Note: a byte is lost in order to prevent wrap-around confusion
     const NATIVE_UINT_TYPE remaining = (m_tail >= m_head) ?
-            // Tail larger than head (nominal): (size - 1) - (tail - head)
-            (m_size - 1 - reinterpret_cast<POINTER_CAST>(m_tail) +
-             reinterpret_cast<POINTER_CAST>(m_head)) :
-            // Non-nominal case, subtract to get remaining
-            (reinterpret_cast<POINTER_CAST>(m_head) -
-             reinterpret_cast<POINTER_CAST>(m_tail) - 1);
+        (m_size - 1 - (reinterpret_cast<POINTER_CAST>(m_tail) - reinterpret_cast<POINTER_CAST>(m_head))) :
+        (reinterpret_cast<POINTER_CAST>(m_head) - reinterpret_cast<POINTER_CAST>(m_tail) - 1);
+    FW_ASSERT(remaining != static_cast<NATIVE_UINT_TYPE>(-1));
     return serialization ? remaining : m_size - 1 - remaining;
 }
 
@@ -67,6 +68,8 @@ Fw::SerializeStatus CircularBuffer :: serialize(const U8* const buffer, const NA
                 reinterpret_cast<POINTER_CAST>(m_tail),
                 reinterpret_cast<POINTER_CAST>(m_head));
     }
+    ASSERT_CONSISTENT(m_store, m_size, m_head);
+    ASSERT_CONSISTENT(m_store, m_size, m_tail);
     return Fw::FW_SERIALIZE_OK;
 }
 
@@ -78,14 +81,9 @@ Fw::SerializeStatus CircularBuffer :: peek(U8& value, NATIVE_UINT_TYPE offset) {
     if (sizeof(U8) > get_remaining_size(false)) {
         return Fw::FW_DESERIALIZE_BUFFER_EMPTY;
     }
-    U8* peeker = m_head;
-    value = 0;
-    peeker = increment(peeker, offset);
-    // Deserialize all the bytes from network format
-    for (NATIVE_UINT_TYPE i = 0; i < sizeof(U8); i++) {
-        value = (value << 8) | static_cast<U8>(*peeker);
-        peeker = increment(peeker);
-    }
+    value = *m_head;
+    ASSERT_CONSISTENT(m_store, m_size, m_head);
+    ASSERT_CONSISTENT(m_store, m_size, m_tail);
     return Fw::FW_SERIALIZE_OK;
 }
 
@@ -105,6 +103,8 @@ Fw::SerializeStatus CircularBuffer :: peek(U32& value, NATIVE_UINT_TYPE offset) 
         value = (value << 8) | static_cast<U32>(*peeker);
         peeker = increment(peeker);
     }
+    ASSERT_CONSISTENT(m_store, m_size, m_head);
+    ASSERT_CONSISTENT(m_store, m_size, m_tail);
     return Fw::FW_SERIALIZE_OK;
 }
 
@@ -124,6 +124,8 @@ Fw::SerializeStatus CircularBuffer :: peek(U8* buffer, NATIVE_UINT_TYPE size, NA
         peeker = increment(peeker);
         buffer = buffer + 1;
     }
+    ASSERT_CONSISTENT(m_store, m_size, m_head);
+    ASSERT_CONSISTENT(m_store, m_size, m_tail);
     return Fw::FW_SERIALIZE_OK;
 }
 
@@ -136,18 +138,20 @@ Fw::SerializeStatus CircularBuffer :: rotate(NATIVE_UINT_TYPE amount) {
         return Fw::FW_DESERIALIZE_BUFFER_EMPTY;
     }
     m_head = increment(m_head, amount);
+    ASSERT_CONSISTENT(m_store, m_size, m_head);
+    ASSERT_CONSISTENT(m_store, m_size, m_tail);
     return Fw::FW_SERIALIZE_OK;
 }
 
-#ifdef DEBUG
+#ifdef CIRCULAR_DEBUG
 void CircularBuffer :: print() {
     U8* pointer = m_head;
-    printf("Ring: ");
+    Os::Log::logMsg("Ring: ", 0, 0, 0, 0, 0, 0);
     while (pointer != m_tail) {
-        printf("%02x ", *pointer);
+    	Os::Log::logMsg("%c", *pointer, 0, 0, 0, 0, 0);
         pointer = increment(pointer);
     }
-    printf("\n");
+    Os::Log::logMsg("\n", 0, 0, 0, 0, 0, 0);
 }
 #endif
 } //End Namespace Types

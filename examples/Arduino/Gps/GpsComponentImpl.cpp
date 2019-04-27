@@ -10,6 +10,7 @@
 
 #include <examples/Arduino/Gps/GpsComponentImpl.hpp>
 #include "Fw/Types/BasicTypes.hpp"
+#include "Os/Log.hpp"
 #include <cstdlib>
 
 #include <stdint.h>
@@ -28,8 +29,9 @@ namespace Gps {
 #else
       GpsComponentBase(void),
 #endif
-      m_in_ring(m_in_buffer, GP_BUFF_SIZE),
-      m_mangled(0),
+      m_in_ring(m_in_buffer, sizeof(m_in_buffer)),
+      m_good(0),
+	  m_mangled(0),
       m_setup(false),
       m_locked(false)
   {
@@ -66,18 +68,9 @@ namespace Gps {
         NATIVE_UINT_TYPE context
     )
   {
-//      static float lat =0.0f; static float lon = 0.0f; static float alt=0.0f;
-
-      /*tlmWrite_Gps_Latitude(lat);
-      tlmWrite_Gps_Longitude(lon);
-      tlmWrite_Gps_Altitude(alt);
-      tlmWrite_Gps_Count((int) lat);*/
       // GPS messages will come in once a second, thus we can process and drain the
       // ring buffer on a 1-second clock
       //processRing();
-     /* lat += 1.0f;
-      lon += 1.0f;
-      alt += 1.0f;*/
   }
 
   void  GpsComponentImpl ::
@@ -86,7 +79,7 @@ namespace Gps {
         Fw::Buffer& fwBuffer /*!< Buffer*/
     )
   {
-      //processBuffer(fwBuffer);
+      processBuffer(fwBuffer);
   }
 
   bool GpsComponentImpl :: readFloat(float& output) {
@@ -111,18 +104,18 @@ namespace Gps {
       U8 tmp8;
       m_in_ring.rotate(1);
       if (!readFloat(packet.utcTime)) {
-          return false;
+    	  return false;
       }
       // Degrees minutes seconds and N/S character
       if (!readFloat(packet.dmNS)) {
-          return false;
+    	  return false;
       }
       m_in_ring.peek(tmp8);
       packet.northSouth = tmp8;
       m_in_ring.rotate(2);
       // Degrees minutes seconds and E/W character
       if (!readFloat(packet.dmEW)) {
-          return false;
+    	  return false;
       }
       m_in_ring.peek(tmp8);
       packet.eastWest = tmp8;
@@ -139,45 +132,46 @@ namespace Gps {
       m_in_ring.rotate(3);
       // HDOP value
       if (!readFloat(packet.hdop)) {
-          return false;
+    	  return false;
       }
       // Altitude1
       if (!readFloat(packet.altitude)) {
-          return false;
+    	  return false;
       }
       return true;
   }
 
   void GpsComponentImpl :: processRing() {
       GgaPacket packet;
-      char temp[GPGGA_LENGTH + 1];
+      Fw::SerializeStatus status;
+      char temp[GP_HEADER_LENGTH + 1];
       // Process through the entire ring buffer taking messages
       while (m_in_ring.get_remaining_size() >= GP_HEADER_LENGTH) {
           // Read routing header
-          m_in_ring.peek(reinterpret_cast<U8*>(temp), GP_HEADER_LENGTH);
-          temp[GP_HEADER_LENGTH] = '\0';
-          m_in_ring.rotate(GP_HEADER_LENGTH);
-          // Look for known headers
-          if (strcmp(temp, "$GPGGA") == 0) {
-              // Break if not enough data
-              if (m_in_ring.get_remaining_size() < GPGGA_LENGTH) {
-                  break;
-              }
-
-              // Mangled message, send telemetry
-              if (!detectGga(packet)) {
-                  m_mangled += 1;
-                  tlmWrite_Gps_Mangled(m_mangled);
-              }
-              // Process GPS message
-              else {
-                  processGga(packet);
-              }
+    	  U8 start = 0;
+    	  m_in_ring.peek(start, 1);
+    	  if (start == 'G') {
+    		  status = m_in_ring.peek(reinterpret_cast<U8*>(temp), GP_HEADER_LENGTH);
+    		  temp[GP_HEADER_LENGTH] = '\0';
+    		  // Look for known headers
+    		  if (status == Fw::FW_SERIALIZE_OK && strcmp(temp, "GPGGA") == 0) {
+				  // Break if not enough data
+				  if (m_in_ring.get_remaining_size() < GPGGA_LENGTH) {
+					  break;
+				  }
+				  m_in_ring.rotate(GP_HEADER_LENGTH);
+				  // Mangled message, send telemetry
+				  if (!detectGga(packet)) {
+					  m_mangled += 1;
+					  tlmWrite_Gps_Mangled(m_mangled);
+				  }
+				  // Process GPS message
+				  else {
+					  processGga(packet);
+				  }
+    		  }
           }
-          // No header found, rotate buffer and continue
-          else {
-              m_in_ring.rotate(1);
-          }
+          m_in_ring.rotate(1);
       }
   }
   void GpsComponentImpl :: processGga(GgaPacket& packet) {
@@ -197,6 +191,8 @@ namespace Gps {
       tlmWrite_Gps_Longitude(lon);
       tlmWrite_Gps_Altitude(packet.altitude);
       tlmWrite_Gps_Count(packet.count);
+      tlmWrite_Gps_PacketCount(m_good);
+      m_good++;
       //Lock status update only if changed
       //Step 7,8: note changed lock status
       // Emit an event if the lock has been aquired, or lost
@@ -207,21 +203,24 @@ namespace Gps {
           m_locked = true;
           log_ACTIVITY_HI_Gps_LockAquired();
       }
-      //Serial.println("\nPacket-go  11\n");
   }
 
   void GpsComponentImpl :: processBuffer(Fw::Buffer& buffer)
   {
       //Serial.write(reinterpret_cast<U8*>(buffer.getdata()), buffer.getsize());
       NATIVE_UINT_TYPE buffer_offset = 0;
-      while (buffer_offset < buffer.getsize()) {
-          NATIVE_UINT_TYPE ser_size = (buffer.getsize() >= m_in_ring.get_remaining_size(true)) ?
-              m_in_ring.get_remaining_size(true) : static_cast<NATIVE_UINT_TYPE>(buffer.getsize());
-          m_in_ring.serialize(reinterpret_cast<U8*>(buffer.getdata()) + buffer_offset, ser_size);
+      NATIVE_UINT_TYPE buffer_remain = 0;
+      NATIVE_UINT_TYPE ring_remain = 0;
+      while (0 < (buffer_remain = (static_cast<NATIVE_UINT_TYPE>(buffer.getsize()) - buffer_offset)) &&
+    		 0 < (ring_remain = m_in_ring.get_remaining_size(true))) {
+          NATIVE_UINT_TYPE ser_size = (buffer_remain >= ring_remain) ? ring_remain : buffer_remain;
+          FW_ASSERT(m_in_ring.serialize(reinterpret_cast<U8*>(buffer.getdata()) + buffer_offset, ser_size) == Fw::FW_SERIALIZE_OK);
           buffer_offset = buffer_offset + ser_size;
+          processRing();
       }
       // Data not placed on the ring will be lost.  Thus the ring needs to be large enough to
-      // hold a second worth of data.
+      // hold a second worth of data. This prevents data loss.
+      FW_ASSERT(buffer.getsize() - buffer_offset == 0, buffer.getsize(), buffer_offset);
   }
 
   // ----------------------------------------------------------------------

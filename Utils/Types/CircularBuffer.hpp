@@ -18,7 +18,7 @@
 #ifndef TYPES_CIRCULAR_BUFFER_HPP
 #define TYPES_CIRCULAR_BUFFER_HPP
 
-#define DEBUG
+#define CIRCULAR_DEBUG
 
 // An assertion to guarantee the self-consistency of a head/tail pointer w.r.t. the store and size
 #define ASSERT_CONSISTENT(store, size, X) \
@@ -84,7 +84,7 @@ class CircularBuffer {
          */
         NATIVE_UINT_TYPE get_remaining_size(bool serialization = false);
 
-#ifdef DEBUG
+#ifdef CIRCULAR_DEBUG
         void print();
 #endif
     private:

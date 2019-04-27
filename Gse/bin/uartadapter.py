@@ -84,6 +84,9 @@ class SerialTcp(object):
                     self.gds_interface.write(com)
                 else:
                     self.down = self.down[1:]
+            # Not enough data, go read more
+            else:
+                break
 
     def run(self):
         """
