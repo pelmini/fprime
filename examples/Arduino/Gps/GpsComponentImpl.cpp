@@ -12,7 +12,7 @@
 #include "Fw/Types/BasicTypes.hpp"
 #include "Os/Log.hpp"
 #include <cstdlib>
-
+#include <Arduino.h>
 #include <stdint.h>
 namespace Gps {
 
@@ -207,6 +207,7 @@ namespace Gps {
 
   void GpsComponentImpl :: processBuffer(Fw::Buffer& buffer)
   {
+	  //Serial1.write(reinterpret_cast<U8*>(buffer.getdata()), buffer.getsize());
       //Serial.write(reinterpret_cast<U8*>(buffer.getdata()), buffer.getsize());
       NATIVE_UINT_TYPE buffer_offset = 0;
       NATIVE_UINT_TYPE buffer_remain = 0;

@@ -30,7 +30,11 @@ Svc::GroundInterfaceComponentImpl groundInterface("GIF");
 // Arduino specific components
 Arduino::LedBlinkerComponentImpl ledBlinker("Blinker");
 Arduino::HardwareRateDriver hardwareRateDriver("RateDr", 100);
-Arduino::SerialDriverComponentImpl serialDriver("SDRV", 0);
+#ifdef COMM_SERIAL
+  Arduino::SerialDriverComponentImpl comm("COMM", 0);
+#else
+  Arduino::RadioWrapperComponentImpl comm("COMM");
+#endif
 Arduino::SerialDriverComponentImpl gpsSerialDriver("SDRV", 2);
 
 Gps::GpsComponentImpl gps("GPS");
@@ -60,7 +64,11 @@ void constructApp() {
     health.init(25,0);
     groundInterface.init(0);
     ledBlinker.init(0);
-    serialDriver.init(0, 115200);
+#ifdef COMM_SERIAL
+    comm.init(0, 115200);
+#else
+    comm.init(0);
+#endif
     gpsSerialDriver.init(0, 9600);
     gps.init(0);
     // Callback to initialize architecture, connect ports, etc.

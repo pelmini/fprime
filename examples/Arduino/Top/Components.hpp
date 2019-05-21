@@ -1,6 +1,8 @@
 #ifndef __ARD_COMPONENTS_HEADER__
 #define __ARD_COMPONENTS_HEADER__
 
+#define COMM_SERIAL
+
 void constructArduinoArchitecture(void);
 void exitTasks(void);
 void constructApp();
@@ -24,6 +26,7 @@ void constructApp();
 #include <examples/Arduino/LedBlinker/LedBlinker.hpp>
 #include <examples/Arduino/HardwareRateDriver/HardwareRateDriver.hpp>
 #include <examples/Arduino/SerialDriver/SerialDriver.hpp>
+#include <examples/Arduino/RadioWrapper/RadioWrapper.hpp>
 // GPS interaction
 #include <examples/Arduino/Gps/GpsComponentImpl.hpp>
 
@@ -43,7 +46,11 @@ extern Svc::FatalHandlerComponentImpl fatalHandler;
 extern Svc::HealthImpl health;
 extern Arduino::LedBlinkerComponentImpl ledBlinker;
 extern Arduino::HardwareRateDriver hardwareRateDriver;
-extern Arduino::SerialDriverComponentImpl serialDriver;
+#ifdef COMM_SERIAL
+  extern Arduino::SerialDriverComponentImpl comm;
+#else
+  extern Arduino::RadioWrapperComponentImpl comm;
+#endif
 extern Arduino::SerialDriverComponentImpl gpsSerialDriver;
 extern Gps::GpsComponentImpl gps;
 #endif

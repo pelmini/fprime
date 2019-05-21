@@ -157,7 +157,8 @@ ARDUINO_REF_MODULES := \
         examples/Arduino/HardwareRateDriver \
         examples/Arduino/LedBlinker \
         examples/Arduino/Gps \
-        examples/Arduino/SerialDriver
+        examples/Arduino/SerialDriver \
+        examples/Arduino/RadioWrapper
 
 Arduino_MODULES := \
         $(ARDUINO_REF_MODULES) \

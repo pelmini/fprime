@@ -26,14 +26,16 @@ class SerialTcp(object):
         self.gds_interface = gds_interface.TCPGDSInterface(address, port)
         self.gds_interface.register(self.to_uart)
         self.down = b""
+        self.retry_serial = True
+        self.serial = None
 
     def open(self):
         """
         Opens the serial port and tcp socket
         """
-        self.serial = serial.Serial(self.device, self.baud, timeout=0)
+        #self.serial = serial.Serial(self.device, self.baud, timeout=0)
         self.gds_interface.open()
-        print("[INFO] Opened socket and device.")
+        print("[INFO] Opened socket.")
 
     def close(self):
         """
@@ -52,16 +54,32 @@ class SerialTcp(object):
         sending += data
         print("[OUT]", " ".join(["{0:02x}".format(ord(byte)) for byte in data]))
         sending += struct.pack(">I", 0xcafecafe);
-        self.serial.write(sending)
+        try:
+            if self.retry_serial:
+                self.serial = serial.Serial(self.device, self.baud, timeout=0)
+                self.retry_serial = False
+            self.serial.write(sending)
+        except serial.serialutil.SerialException:
+            if self.serial is not None:
+                self.serial.close()
+            self.retry_serial = True
 
     def from_uart(self):
         """
         Handles the "from-uart" portion of the duplex communcation. This sends data out the socket that was taken
         directly off the serial port read from the tcp server.
         """
-        data = self.serial.read(1024)
-        if data:
-            self.process_down(data)
+        try:
+            if self.retry_serial:
+                self.serial = serial.Serial(self.device, self.baud, timeout=0)
+                self.retry_serial = False
+            data = self.serial.read(1024)
+            if data:
+                self.process_down(data)
+        except serial.serialutil.SerialException:
+            if self.serial is not None:
+                self.serial.close()
+            self.retry_serial = True
 
     def process_down(self, data):
         """

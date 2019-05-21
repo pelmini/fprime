@@ -105,7 +105,7 @@ SRC_TEENSY32 =  Baremetal/Queue.cpp \
 				Baremetal/FileSystem.cpp \
 				Baremetal/Task.cpp \
 				Baremetal/Mutex.cpp \
-				Baremetal/IntervalTimer.cpp \
+				Arduino/IntervalTimer.cpp \
 				Baremetal/TaskRunner/TaskRunner.cpp \
                	Pthreads/BufferQueueCommon.cpp \
                 Pthreads/FIFOBufferQueue.cpp \
@@ -116,7 +116,7 @@ SRC_TEENSY32 =  Baremetal/Queue.cpp \
 #				Linux/InterruptLock.cpp \
 #				Linux/WatchdogTimer.cpp \
 #				X86/IntervalTimer.cpp \
-#				Linux/IntervalTimer.cpp \
+
 #				Linux/FileSystem.cpp
 
 				

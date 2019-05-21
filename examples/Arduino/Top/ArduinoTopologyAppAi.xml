@@ -26,7 +26,8 @@
    <import_component_type>examples/Arduino/HardwareRateDriver/HardwareRateDriverComponentAi.xml</import_component_type>
    <import_component_type>examples/Arduino/LedBlinker/LedBlinkerComponentAi.xml</import_component_type>
    <import_component_type>examples/Arduino/SerialDriver/SerialDriverComponentAi.xml</import_component_type>
-    <import_component_type>examples/Arduino/Gps/GpsComponentAi.xml</import_component_type>
+   <import_component_type>examples/Arduino/RadioWrapper/RadioWrapperComponentAi.xml</import_component_type>
+   <import_component_type>examples/Arduino/Gps/GpsComponentAi.xml</import_component_type>
 
    <!-- Declare component instances - must match names in Components.hpp -->
 
@@ -58,7 +59,9 @@
 
    <instance namespace="Arduino" name="hardwareRateDriver" type="HardwareRateDriver" base_id="2000"  base_id_window="20" />
 
-   <instance namespace="Arduino" name="serialDriver" type="SerialDriver" base_id="2100"  base_id_window="20" />
+   <!--  Choose one of the following -->
+   <instance namespace="Arduino" name="comm" type="SerialDriver" base_id="2100"  base_id_window="20" />
+   <!-- instance namespace="Arduino" name="comm" type="RadioWrapper" base_id="2100"  base_id_window="20" /-->
 
    <instance namespace="Gps" name="gps" type="Gps" base_id="2200"  base_id_window="20" />
    
@@ -317,12 +320,12 @@
 
    <connection name = "groundInterWrite">
        <source component = "groundInterface" port = "write" type = "BufferSend" num = "0"/>
-        <target component = "serialDriver" port = "write" type = "BufferSend" num = "0"/>
+        <target component = "comm" port = "write" type = "BufferSend" num = "0"/>
    </connection>
 
    <connection name = "groundInterRead">
        <source component = "groundInterface" port = "readPoll" type = "BufferSend" num = "0"/>
-        <target component = "serialDriver" port = "readPoll" type = "BufferSend" num = "0"/>
+        <target component = "comm" port = "readPoll" type = "BufferSend" num = "0"/>
    </connection>
 
    <!-- Serial port connection -->

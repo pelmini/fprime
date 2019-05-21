@@ -34,7 +34,7 @@ namespace Arduino {
               break;
       }
       reinterpret_cast<HardwareSerial*>(m_port_pointer)->begin(baud);
-      reinterpret_cast<HardwareSerial*>(m_port_pointer)->setTimeout(1);
+      reinterpret_cast<HardwareSerial*>(m_port_pointer)->setTimeout(4);
   }
 
 

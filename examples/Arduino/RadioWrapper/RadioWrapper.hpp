@@ -1,46 +1,48 @@
 // ====================================================================== 
-// \title  SerialDriverImpl.hpp
+// \title  RadioWrapperImpl.hpp
 // \author lestarch
-// \brief  hpp file for SerialDriver component implementation class
+// \brief  hpp file for RadioWrapper component implementation class
 // ====================================================================== 
 
-#ifndef SerialDriver_HPP
-#define SerialDriver_HPP
+#ifndef RadioWrapper_HPP
+#define RadioWrapper_HPP
 
-#include "Os/Task.hpp"
-#include "examples/Arduino/SerialDriver/SerialDriverComponentAc.hpp"
+#include "examples/Arduino/RadioWrapper/RadioWrapperComponentAc.hpp"
+#include "examples/Arduino/RFM69/RFM69.h"
+
+#define NODEID_GROUND 0
+#define NODEID_REMOTE 1
+#define RADIO_RETRIES 0
 
 namespace Arduino {
 
-  class SerialDriverComponentImpl :
-    public SerialDriverComponentBase
+  class RadioWrapperComponentImpl :
+    public RadioWrapperComponentBase
   {
 
     public:
-      const static NATIVE_UINT_TYPE SERIAL_BUFFER_SIZE = 200; //115200 / 10 / 10 + 1;
+      const static NATIVE_UINT_TYPE SERIAL_BUFFER_SIZE = 100; //115200 / 10 / 10 + 1;
       // ----------------------------------------------------------------------
       // Construction, initialization, and destruction
       // ----------------------------------------------------------------------
 
-      //! Construct object SerialDriver
+      //! Construct object RadioWrapper
       //!
-      SerialDriverComponentImpl(
+      RadioWrapperComponentImpl(
 #if FW_OBJECT_NAMES == 1
-          const char *const compName, /*!< The component name*/
+          const char *const compName /*!< The component name*/
 #endif
-          NATIVE_UINT_TYPE portNumber
       );
 
-      //! Initialize object SerialDriver
+      //! Initialize object RadioWrapper
       //!
       void init(
-          const NATIVE_INT_TYPE instance, /*!< The instance number*/
-          const NATIVE_UINT_TYPE baud
+          const NATIVE_INT_TYPE instance /*!< The instance number*/
       );
 
-      //! Destroy object SerialDriver
+      //! Destroy object RadioWrapper
       //!
-      ~SerialDriverComponentImpl(void);
+      ~RadioWrapperComponentImpl(void);
 
     PRIVATE:
       //! Read the actual data
@@ -71,13 +73,12 @@ namespace Arduino {
           const NATIVE_INT_TYPE portNum, /*!< The port number*/
           NATIVE_UINT_TYPE context /*!< The call order*/
       );
-
-      //! Port number to open
-      NATIVE_UINT_TYPE m_port_number;
-      //! Stores the open serial port, POINTER_CAST so Linux and Ardunio may use different types
-      POINTER_CAST m_port_pointer;
+#ifdef ARDUINO
+      RFM69 m_radio;
+#else
       //! Data store for self-generated serial data
-      U8 m_data[SERIAL_BUFFER_SIZE]; // Max data in 1/10th second at 115200
+      U8 m_data[61]; // Max data in 1/10th second at 115200
+#endif
       //! Buffer to wrap
       Fw::Buffer m_local_buffer;
     };
