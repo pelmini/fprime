@@ -40,11 +40,6 @@ HDR = \
 	MemAllocator.hpp \
 	MallocAllocator.hpp
 
-#	FwStructSerializable.hpp
-
-SRC_BAERAD750 = \
-	VxWorks/VxWorksLogAssert.cpp
-
 SRC_TEENSY32 = Generic/GenericLogAssert.cpp
 
 SUBDIRS = test

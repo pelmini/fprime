@@ -17,7 +17,8 @@ FW_MODULES := \
 	Fw/Com \
 	Fw/ComFile \
 	Fw/SerializableFile \
-	Fw/Types
+	Fw/Types \
+        Fw/Logger
 
 FW_MINIMAL_MODULES := \
 	Fw/Cfg \
