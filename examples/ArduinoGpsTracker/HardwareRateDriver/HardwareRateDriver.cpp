@@ -1,6 +1,6 @@
 #include <Fw/Types/BasicTypes.hpp>
 #include <Fw/Types/Assert.hpp>
-#include <examples/Arduino/HardwareRateDriver/HardwareRateDriver.hpp>
+#include <examples/ArduinoGpsTracker/HardwareRateDriver/HardwareRateDriver.hpp>
 
 namespace Arduino {
 

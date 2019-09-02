@@ -1,4 +1,4 @@
-#include <examples/Arduino/Top/Components.hpp>
+#include <examples/ArduinoGpsTracker/Top/Components.hpp>
 #include <Fw/Types/Generic/GenericLogAssert.hpp>
 #include <Os/Log.hpp>
 #ifdef ARDUINO

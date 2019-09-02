@@ -2,7 +2,7 @@
 #include <Fw/Types/Assert.hpp>
 #include <Os/Task.hpp>
 #include <Fw/Types/EightyCharString.hpp>
-#include <examples/Arduino/HardwareRateDriver/HardwareRateDriver.hpp>
+#include <examples/ArduinoGpsTracker/HardwareRateDriver/HardwareRateDriver.hpp>
 #include <sys/time.h>
 
 namespace Arduino {

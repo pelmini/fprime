@@ -8,10 +8,13 @@
 #define SerialDriver_HPP
 
 #include "Os/Task.hpp"
-#include "examples/Arduino/SerialDriver/SerialDriverComponentAc.hpp"
+#include "examples/ArduinoGpsTracker/SerialDriver/SerialDriverComponentAc.hpp"
 
 namespace Arduino {
-
+//Allow for setting serial ports from the inputs
+#ifndef ARDUINO
+    extern char** SERIAL_PORT;
+#endif
   class SerialDriverComponentImpl :
     public SerialDriverComponentBase
   {

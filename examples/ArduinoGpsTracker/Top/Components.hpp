@@ -23,13 +23,12 @@ void constructApp();
 #include <Svc/AssertFatalAdapter/AssertFatalAdapterComponentImpl.hpp>
 #include <Svc/FatalHandler/FatalHandlerComponentImpl.hpp>
 
-#include <examples/Arduino/LedBlinker/LedBlinker.hpp>
-#include <examples/Arduino/HardwareRateDriver/HardwareRateDriver.hpp>
-#include <examples/Arduino/SerialDriver/SerialDriver.hpp>
-#include <examples/Arduino/RadioWrapper/RadioWrapper.hpp>
+#include <examples/ArduinoGpsTracker/LedBlinker/LedBlinker.hpp>
+#include <examples/ArduinoGpsTracker/HardwareRateDriver/HardwareRateDriver.hpp>
+#include <examples/ArduinoGpsTracker/SerialDriver/SerialDriver.hpp>
+#include <examples/ArduinoGpsTracker/RadioWrapper/RadioWrapper.hpp>
 // GPS interaction
-#include <examples/Arduino/Gps/GpsComponentImpl.hpp>
-
+#include <examples/ArduinoGpsTracker/Gps/GpsComponentImpl.hpp>
 //Core components. Gotta run them all
 extern Svc::RateGroupDriverImpl rateGroupDriverComp;
 extern Svc::ActiveRateGroupImpl rateGroup10HzComp;
