@@ -54,24 +54,40 @@ set(OPTIONS "${OPTIONS} -DARDUINO=${TEENSY_ARDUINO_NUM} -DTEENSYDUINO=${TEENSY_T
 
 set(TEENSY_BOTH_FLAGS "-Wall -g -Os -mcpu=${TEENSY_CPU_ARCH} -mthumb ${OPTIONS} ${TEENSY_CPP}")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${TEENSY_BOTH_FLAGS}" CACHE STRING "C_FLAGS")
-set(CMAKE_CXX_FLAGS "-std=gnu++14 -felide-constructors -fno-exceptions -fno-rtti ${TEENSY_BOTH_FLAGS}" CACHE STRING "CXX_FLAGS")
-set(CMAKE_EXE_LINKER_FLAGS "-mcpu=${TEENSY_CPU_ARCH} -mthumb -T${TEENSY_SRC_DIR}/${MCU_LD} ${TEENSY_LD}" CACHE STRING "LD_FLAGS")
+set(CMAKE_CXX_FLAGS "-std=gnu++14 -felide-constructors -fno-exceptions -fno-rtti ${TEENSY_BOTH_FLAGS}"
+        CACHE STRING "CXX_FLAGS")
+set(CMAKE_EXE_LINKER_FLAGS "-mcpu=${TEENSY_CPU_ARCH} -mthumb -T${TEENSY_SRC_DIR}/${MCU_LD} ${TEENSY_LD}"
+        CACHE STRING "LD_FLAGS")
 set(CMAKE_CXX_COMPILE_OBJECT "${CMAKE_CXX_COMPILER} -c <SOURCE> -o <OBJECT> <FLAGS> <INCLUDES>" CACHE STRING "comp obj")
 set(CMAKE_C_COMPILE_OBJECT   "${CMAKE_C_COMPILER} -c <SOURCE> -o <OBJECT> <FLAGS> <INCLUDES>" CACHE STRING "comp obj")
 
-# Build the Arduino core library
-file(GLOB ARDUINO_SRC "${TEENSY_SRC_DIR}/*.cpp" "${TEENSY_SRC_DIR}/*.c")
-# Add the teensy core lib only once
+# Build the Arduino core library for Teensy
 if (NOT TARGET "teensycore")
-    message(STATUS "SRC DIR: ${TEENSY_SRC_DIR}")
+    # Glob up all the files, excluding "main.cpp"
+    file(GLOB ARDUINO_SRC "${TEENSY_SRC_DIR}/*.cpp" "${TEENSY_SRC_DIR}/*.c")
+    #list(FILTER ARDUINO_SRC EXCLUDE REGEX "main\.cpp")
+
+    message(STATUS "SRC DIR: ${TEENSY_SRC_DIR} FILE: ${ARDUINO_SRC}")
     add_library("teensycore" ${ARDUINO_SRC})
     target_include_directories("teensycore" BEFORE PUBLIC ${TEENSY_SRC_DIR})
 endif()
 ####
+# add_arduino_dependency:
 #
+# Adds a dependency on the built version of the Arduino core for the teensy. It also registers a custom command to build
+# the hex version of the output file for upload to the teensy itself. This will allow the user to burn to the Teensy
+# using the Teensy bootloader utility.
+# @param target: target project used to identify the output executable
 ####
 function(add_arduino_dependency target)
+    # Add a dependency on the teensycore (Arduino framework build) to the target
     add_dependencies(${target} "teensycore")
+    target_link_libraries(${target} "teensycore")
     target_include_directories(${target} PUBLIC ${TEENSY_SRC_DIR})
-    
+    # Add a command to generate the hex, and adding the custom target to link it in
+    add_custom_command(OUTPUT "${target}.hex"
+                       COMMAND "${CMAKE_OBJCOPY}"
+                       ARGS "-O" "ihex" "-R" ".eeprom" "${target}" "${target}.hex"
+                       DEPENDS "${target}")
+    add_custom_target("${target}_hex" ALL DEPENDS "${target}.hex")
 endfunction()
