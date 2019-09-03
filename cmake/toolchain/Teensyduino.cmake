@@ -6,7 +6,7 @@
 # toolchain will build the core Teensy Arduino libraries, and include the headers as part of the target include headers.
 ####
 # System setup for Teensyduino
-set(CMAKE_SYSTEM_NAME Generic)
+set(CMAKE_SYSTEM_NAME Teensyduino)
 set(CMAKE_SYSTEM_PROCESSOR arm)
 set(CMAKE_CROSSCOMPILING 1)
 set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY" CACHE STRING "Try Static Lib Type" FORCE)
