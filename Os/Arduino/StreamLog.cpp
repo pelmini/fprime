@@ -27,7 +27,7 @@ namespace Os {
      * handler formats a message an sends it out to the serial port/Wire port or Arduino stream
      * backing the stream object. This allows for a side-channel serial console.
      */
-    void Log::logMsg(
+    void Log::log(
         const char* format,
         POINTER_CAST a1,
         POINTER_CAST a2,

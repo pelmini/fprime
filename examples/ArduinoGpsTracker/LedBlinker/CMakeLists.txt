@@ -12,5 +12,13 @@ set(SOURCE_FILES
 # Check the Linux build
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/LedBlinkerLinux.cpp")
+# Teensyduino additions
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Teensyduino")
+    list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/LedBlinkerArduino.cpp")
 endif()
 register_fprime_module()
+# Add Teensyduino dependency
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Teensyduino")
+    get_module_name(${CMAKE_CURRENT_LIST_DIR})
+    add_arduino_dependency("${MODULE_NAME}")
+endif()

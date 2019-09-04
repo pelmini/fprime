@@ -15,9 +15,12 @@ set(SOURCE_FILES
 set(MOD_DEPS
   Fw/Logger
   Svc/PassiveConsoleTextLogger
-  Svc/SocketGndIf
+  Svc/GroundInterface
   Svc/LinuxTime
   Os
   Os/Baremetal/TaskRunner
 )
 register_fprime_executable()
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Teensyduino")
+    add_arduino_dependency("${PROJECT_NAME}")
+endif()

@@ -67,9 +67,8 @@ if (NOT TARGET "teensycore")
     file(GLOB ARDUINO_SRC "${TEENSY_SRC_DIR}/*.cpp" "${TEENSY_SRC_DIR}/*.c")
     #list(FILTER ARDUINO_SRC EXCLUDE REGEX "main\.cpp")
 
-    message(STATUS "SRC DIR: ${TEENSY_SRC_DIR} FILE: ${ARDUINO_SRC}")
     add_library("teensycore" ${ARDUINO_SRC})
-    target_include_directories("teensycore" BEFORE PUBLIC ${TEENSY_SRC_DIR})
+    target_include_directories("teensycore" PUBLIC ${TEENSY_SRC_DIR})
 endif()
 ####
 # add_arduino_dependency:
@@ -84,10 +83,15 @@ function(add_arduino_dependency target)
     add_dependencies(${target} "teensycore")
     target_link_libraries(${target} "teensycore")
     target_include_directories(${target} PUBLIC ${TEENSY_SRC_DIR})
-    # Add a command to generate the hex, and adding the custom target to link it in
-    add_custom_command(OUTPUT "${target}.hex"
-                       COMMAND "${CMAKE_OBJCOPY}"
-                       ARGS "-O" "ihex" "-R" ".eeprom" "${target}" "${target}.hex"
-                       DEPENDS "${target}")
-    add_custom_target("${target}_hex" ALL DEPENDS "${target}.hex")
+
+    # Check if executable
+    get_target_property(target_type ${target} TYPE)
+    if (target_type STREQUAL "EXECUTABLE")
+        # Add a command to generate the hex, and adding the custom target to link it in
+        add_custom_command(OUTPUT "${target}.hex"
+                           COMMAND "${CMAKE_OBJCOPY}"
+                           ARGS "-O" "ihex" "-R" ".eeprom" "${target}" "${target}.hex"
+                           DEPENDS "${target}")
+        add_custom_target("${target}_hex" ALL DEPENDS "${target}.hex")
+    endif()
 endfunction()

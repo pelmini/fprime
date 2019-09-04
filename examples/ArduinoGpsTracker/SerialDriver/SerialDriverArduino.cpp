@@ -5,7 +5,7 @@
 // ====================================================================== 
 
 
-#include <examples/Arduino/SerialDriver/SerialDriver.hpp>
+#include <examples/ArduinoGpsTracker/SerialDriver/SerialDriver.hpp>
 #include "Fw/Types/BasicTypes.hpp"
 #include <Arduino.h>
 #include <Os/Log.hpp>
