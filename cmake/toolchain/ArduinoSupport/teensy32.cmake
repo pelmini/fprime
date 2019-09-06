@@ -17,6 +17,7 @@ set(TEENSY_ARDUINO_NUM 10805)
 set(TEENSY_TEENSYDUINO_NUM 144)
 set(TEENSY_CPU_ARCH  cortex-m4)
 
-# Set the Teensy C++ and LD options
-set(TEENSY_CPP "-MMD")
-set(TEENSY_LD  "-Os -Wl,--gc-sections,--defsym=__rtc_localtime=0 -mcpu=${TEENSY_CPU_ARCH}")
+# Teensy extras (maybe not needed)
+set(TEENSY_CPU_FLAGS "")
+set(TEENSY_LIBS "")
+set(TEENSY_SHIM_SOURCES "")

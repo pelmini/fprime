@@ -10,6 +10,6 @@ set(TEENSY_ARDUINO_NUM 10808)
 set(TEENSY_TEENSYDUINO_NUM 145)
 set(TEENSY_CPU_ARCH  cortex-m7)
 
-
-set(TEENSY_CPP "-mfloat-abi=hard -mfpu=fpv4-sp-d16 -fsingle-precision-constant")
-set(TEENSY_LD "-Wl,--gc-sections")
+set(TEENSY_CPU_FLAGS "-mfloat-abi=hard -mfpu=fpv5-d16")
+set(TEENSY_LIBS "arm_cortexM7lfsp_math")
+set(TEENSY_SHIM_SOURCES "${CMAKE_CURRENT_LIST_DIR}/setup2main.c")

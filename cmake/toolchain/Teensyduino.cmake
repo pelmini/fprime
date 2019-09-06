@@ -36,37 +36,45 @@ else()
     set(TOOL_SUFFIX )
 endif()
 # Set the tools path
-set(CMAKE_C_COMPILER   "${ARDUINO_TOOLS_PATH}/arm-none-eabi-gcc${TOOL_SUFFIX}"         CACHE PATH "gcc"     FORCE)
-set(CMAKE_CXX_COMPILER "${ARDUINO_TOOLS_PATH}/arm-none-eabi-g++${TOOL_SUFFIX}"         CACHE PATH "g++"     FORCE)
-set(CMAKE_AR           "${ARDUINO_TOOLS_PATH}/arm-none-eabi-gcc-ar${TOOL_SUFFIX}"      CACHE PATH "archive" FORCE)
-set(CMAKE_LINKER       "${ARDUINO_TOOLS_PATH}/arm-none-eabi-ld${TOOL_SUFFIX}"          CACHE PATH "linker"  FORCE)
-set(CMAKE_NM           "${ARDUINO_TOOLS_PATH}/arm-none-eabi-nm${TOOL_SUFFIX}"          CACHE PATH "nm"      FORCE)
-set(CMAKE_OBJCOPY      "${ARDUINO_TOOLS_PATH}/arm-none-eabi-objcopy${TOOL_SUFFIX}"     CACHE PATH "objcopy" FORCE)
-set(CMAKE_OBJDUMP      "${ARDUINO_TOOLS_PATH}/arm-none-eabi-objdump${TOOL_SUFFIX}"     CACHE PATH "objdump" FORCE)
-set(CMAKE_STRIP        "${ARDUINO_TOOLS_PATH}/arm-none-eabi-strip${TOOL_SUFFIX}"       CACHE PATH "strip"   FORCE)
-set(CMAKE_SIZE         "${ARDUINO_TOOLS_PATH}/arm-none-eabi-size${TOOL_SUFFIX}"        CACHE PATH "size"   FORCE)
-set(CMAKE_RANLIB       "${ARDUINO_TOOLS_PATH}/arm-none-eabi-gcc-ranlib${TOOL_SUFFIX}"  CACHE PATH "ranlib"  FORCE)
+set(CMAKE_C_COMPILER   "${ARDUINO_TOOLS_PATH}/arm-none-eabi-gcc${TOOL_SUFFIX}"         CACHE PATH "gcc"       FORCE)
+set(CMAKE_CXX_COMPILER "${ARDUINO_TOOLS_PATH}/arm-none-eabi-g++${TOOL_SUFFIX}"         CACHE PATH "g++"       FORCE)
+set(CMAKE_ASM_COMPILER "${ARDUINO_TOOLS_PATH}/arm-none-eabi-g++${TOOL_SUFFIX}"         CACHE PATH "assembler" FORCE)
+set(CMAKE_AR           "${ARDUINO_TOOLS_PATH}/arm-none-eabi-gcc-ar${TOOL_SUFFIX}"      CACHE PATH "archive"   FORCE)
+set(CMAKE_LINKER       "${ARDUINO_TOOLS_PATH}/arm-none-eabi-ld${TOOL_SUFFIX}"          CACHE PATH "linker"    FORCE)
+set(CMAKE_NM           "${ARDUINO_TOOLS_PATH}/arm-none-eabi-nm${TOOL_SUFFIX}"          CACHE PATH "nm"        FORCE)
+set(CMAKE_OBJCOPY      "${ARDUINO_TOOLS_PATH}/arm-none-eabi-objcopy${TOOL_SUFFIX}"     CACHE PATH "objcopy"   FORCE)
+set(CMAKE_OBJDUMP      "${ARDUINO_TOOLS_PATH}/arm-none-eabi-objdump${TOOL_SUFFIX}"     CACHE PATH "objdump"   FORCE)
+set(CMAKE_STRIP        "${ARDUINO_TOOLS_PATH}/arm-none-eabi-strip${TOOL_SUFFIX}"       CACHE PATH "strip"     FORCE)
+set(CMAKE_SIZE         "${ARDUINO_TOOLS_PATH}/arm-none-eabi-size${TOOL_SUFFIX}"        CACHE PATH "size"      FORCE)
+set(CMAKE_RANLIB       "${ARDUINO_TOOLS_PATH}/arm-none-eabi-gcc-ranlib${TOOL_SUFFIX}"  CACHE PATH "ranlib"    FORCE)
 
+# Teensy common defines
+set(TEENSY_DEF "-DF_CPU=${TEENSY_FREQ} -DUSB_SERIAL -DLAYOUT_US_ENGLISH -DUSING_MAKEFILE -D__${TEENSY_MCU}__")
+set(TEENSY_DEF "${TEENSY_DEF} -DARDUINO=${TEENSY_ARDUINO_NUM} -DTEENSYDUINO=${TEENSY_TEENSYDUINO_NUM}")
+# Teensy flags for each language
+set(TEENSY_COM "-Wall -g -Os -MMD -ffunction-sections -fdata-sections")
+set(TEENSY_CPU "-mthumb -mcpu=${TEENSY_CPU_ARCH} ${TEENSY_CPU_FLAGS}")
+set(TEENSY_CPP "-std=gnu++14 -fno-exceptions -fpermissive -fno-rtti -felide-constructors -Wno-error=narrowing")
+set(TEENSY_ASM "-x assembler-with-cpp")
+set(TEENSY_LD  "-T${TEENSY_SRC_DIR}/${MCU_LD} -Wl,--gc-sections,--defsym=__rtc_localtime=0") #TODO: fix this time
 
-set(OPTIONS "-DF_CPU=${TEENSY_FREQ} -DUSB_SERIAL -DLAYOUT_US_ENGLISH -DUSING_MAKEFILE -D__${TEENSY_MCU}__")
-set(OPTIONS "${OPTIONS} -DARDUINO=${TEENSY_ARDUINO_NUM} -DTEENSYDUINO=${TEENSY_TEENSYDUINO_NUM}")
+# Set the tool and language flags
+set(CMAKE_C_FLAGS   "${TEENSY_CPU} ${TEENSY_COM} ${TEENSY_DEF}"               CACHE STRING "C_FLAGS")
+set(CMAKE_CXX_FLAGS "${TEENSY_CPU} ${TEENSY_COM} ${TEENSY_DEF} ${TEENSY_CPP}" CACHE STRING "CXX_FLAGS")
+set(CMAKE_ASM_FLAGS "${TEENSY_CPU} ${TEENSY_COM} ${TEENSY_DEF} ${TEENSY_ASM}" CACHE STRING "ASM_FLAGS")
+set(CMAKE_EXE_LINKER_FLAGS "${TEENSY_CPU} ${TEENSY_LD}"                       CACHE STRING "LD_FLAGS")
 
-set(TEENSY_BOTH_FLAGS "-Wall -g -Os -mcpu=${TEENSY_CPU_ARCH} -mthumb ${OPTIONS} ${TEENSY_CPP}")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${TEENSY_BOTH_FLAGS}" CACHE STRING "C_FLAGS")
-set(CMAKE_CXX_FLAGS "-std=gnu++14 -felide-constructors -fno-exceptions -fno-rtti ${TEENSY_BOTH_FLAGS}"
-        CACHE STRING "CXX_FLAGS")
-set(CMAKE_EXE_LINKER_FLAGS "-mcpu=${TEENSY_CPU_ARCH} -mthumb -T${TEENSY_SRC_DIR}/${MCU_LD} ${TEENSY_LD}"
-        CACHE STRING "LD_FLAGS")
-set(CMAKE_CXX_COMPILE_OBJECT "${CMAKE_CXX_COMPILER} -c <SOURCE> -o <OBJECT> <FLAGS> <INCLUDES>" CACHE STRING "comp obj")
-set(CMAKE_C_COMPILE_OBJECT   "${CMAKE_C_COMPILER} -c <SOURCE> -o <OBJECT> <FLAGS> <INCLUDES>" CACHE STRING "comp obj")
+# Calls into the compiler
+set(CMAKE_CXX_COMPILE_OBJECT "${CMAKE_CXX_COMPILER} -c <SOURCE> -o <OBJECT> <FLAGS> <INCLUDES>" CACHE STRING "C++ to o")
+set(CMAKE_ASM_COMPILE_OBJECT "${CMAKE_ASM_COMPILER} -c <SOURCE> -o <OBJECT> <FLAGS> <INCLUDES>" CACHE STRING "ASM to o")
+set(CMAKE_C_COMPILE_OBJECT   "${CMAKE_C_COMPILER}   -c <SOURCE> -o <OBJECT> <FLAGS> <INCLUDES>" CACHE STRING "C to o")
 
 # Build the Arduino core library for Teensy
 if (NOT TARGET "teensycore")
     # Glob up all the files, excluding "main.cpp"
-    file(GLOB ARDUINO_SRC "${TEENSY_SRC_DIR}/*.cpp" "${TEENSY_SRC_DIR}/*.c")
-    #list(FILTER ARDUINO_SRC EXCLUDE REGEX "main\.cpp")
-
-    add_library("teensycore" ${ARDUINO_SRC})
+    file(GLOB ARDUINO_SRC "${TEENSY_SRC_DIR}/*.cpp" "${TEENSY_SRC_DIR}/*.c" "${TEENSY_SRC_DIR}/*.S")
+    add_library("teensycore" ${ARDUINO_SRC} ${TEENSY_SHIM_SOURCES})
+    target_link_libraries("teensycore" "m" "stdc++" ${TEENSY_LIBS})
     target_include_directories("teensycore" PUBLIC ${TEENSY_SRC_DIR})
 endif()
 ####
@@ -80,9 +88,8 @@ endif()
 function(add_arduino_dependency target)
     # Add a dependency on the teensycore (Arduino framework build) to the target
     add_dependencies(${target} "teensycore")
-    target_link_libraries(${target} "teensycore")
+    target_link_libraries(${target} "teensycore" "m" "stdc++")
     target_include_directories(${target} PUBLIC ${TEENSY_SRC_DIR})
-
     # Check if executable
     get_target_property(target_type ${target} TYPE)
     if (target_type STREQUAL "EXECUTABLE")
