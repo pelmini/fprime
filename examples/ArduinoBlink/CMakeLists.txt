@@ -17,7 +17,7 @@
 # This contains the basic project information. Specifically, a cmake version and
 # project definition.
 ##
-project(ArduinoBlink C CXX)
+project(ArduinoBlink C CXX ASM)
 cmake_minimum_required(VERSION 3.5)
 
 set(BAREMETAL_SCHEDULER CACHE BOOL ON "Uses the baremtal scheduler")

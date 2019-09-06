@@ -10,15 +10,13 @@ set(CMAKE_SYSTEM_NAME Teensyduino)
 set(CMAKE_SYSTEM_PROCESSOR arm)
 set(CMAKE_CROSSCOMPILING 1)
 set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY" CACHE STRING "Try Static Lib Type" FORCE)
-#set(CMAKE_CXX_COMPILER_)
 
 # Check if ARDUINO_SDK_PATH is set, otherwise set it to /opt/arduino-1.8.9/
 if (NOT DEFINED ARDUINO_SDK_PATH)
     set(ARDUINO_SDK_PATH "/opt/arduino-1.8.9")
 endif()
-if (NOT DEFINED TEENSY_VERSION)
-    set(TEENSY_VERSION "teensy32")
-endif()
+
+SET(TEENSY_VERSION "teensy32" CACHE STRING "Version of TEENSY to use")
 string(REGEX MATCH "teensy[0-9]" TEENSY_CORE_DIR "${TEENSY_VERSION}")
 include("${CMAKE_CURRENT_LIST_DIR}/ArduinoSupport/${TEENSY_VERSION}.cmake")
 set(TEENSY_SRC_DIR "${ARDUINO_SDK_PATH}/hardware/teensy/avr/cores/${TEENSY_CORE_DIR}" CACHE PATH "Teensy SRC")
@@ -46,6 +44,7 @@ set(CMAKE_NM           "${ARDUINO_TOOLS_PATH}/arm-none-eabi-nm${TOOL_SUFFIX}"   
 set(CMAKE_OBJCOPY      "${ARDUINO_TOOLS_PATH}/arm-none-eabi-objcopy${TOOL_SUFFIX}"     CACHE PATH "objcopy" FORCE)
 set(CMAKE_OBJDUMP      "${ARDUINO_TOOLS_PATH}/arm-none-eabi-objdump${TOOL_SUFFIX}"     CACHE PATH "objdump" FORCE)
 set(CMAKE_STRIP        "${ARDUINO_TOOLS_PATH}/arm-none-eabi-strip${TOOL_SUFFIX}"       CACHE PATH "strip"   FORCE)
+set(CMAKE_SIZE         "${ARDUINO_TOOLS_PATH}/arm-none-eabi-size${TOOL_SUFFIX}"        CACHE PATH "size"   FORCE)
 set(CMAKE_RANLIB       "${ARDUINO_TOOLS_PATH}/arm-none-eabi-gcc-ranlib${TOOL_SUFFIX}"  CACHE PATH "ranlib"  FORCE)
 
 
@@ -88,10 +87,12 @@ function(add_arduino_dependency target)
     get_target_property(target_type ${target} TYPE)
     if (target_type STREQUAL "EXECUTABLE")
         # Add a command to generate the hex, and adding the custom target to link it in
-        add_custom_command(OUTPUT "${target}.hex"
+        add_custom_command(OUTPUT "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${target}.hex"
                            COMMAND "${CMAKE_OBJCOPY}"
-                           ARGS "-O" "ihex" "-R" ".eeprom" "${target}" "${target}.hex"
+                           ARGS "-O" "ihex" "-R" ".eeprom" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${target}" "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${target}.hex"
                            DEPENDS "${target}")
-        add_custom_target("${target}_hex" ALL DEPENDS "${target}.hex")
+        add_custom_target("${target}_hex" ALL DEPENDS "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${target}.hex")
+	add_custom_command(TARGET ${target} POST_BUILD COMMAND ${CMAKE_SIZE} "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${target}")
+	add_custom_command(TARGET ${target}_hex POST_BUILD COMMAND ${CMAKE_SIZE} "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${target}.hex")
     endif()
 endfunction()
