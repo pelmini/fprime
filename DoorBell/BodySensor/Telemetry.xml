@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?oxygen RNGSchema="file:../xml/ISF_Component_Schema.rnc" type="compact"?>
+
+<!--====================================================================== 
+
+  GpsApp/Gps/Telemetry
+
+======================================================================-->
+
+<telemetry>
+
+  <channel
+    id="0"
+    name="BodySensor_RawData"
+    data_type="U16"
+    abbrev="BSR-0000"
+  >
+    <comment>Current distance of person</comment>
+  </channel>
+
+  <channel
+    id="1"
+    name="BodySensor_Counter"
+    data_type="U32"
+    abbrev="BSR-0001"
+  >
+    <comment>Number of people that went into Micheal's office</comment>
+  </channel>
+
+</telemetry>
