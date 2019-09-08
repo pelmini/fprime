@@ -9,7 +9,7 @@
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Teensyduino")
   set(SOURCE_FILES
       "${CMAKE_CURRENT_LIST_DIR}/ArduinoTimeImpl.cpp")
-elseif()
+else()
   set(SOURCE_FILES
       "${CMAKE_CURRENT_LIST_DIR}/LinuxTimeImpl.cpp")
 endif()
