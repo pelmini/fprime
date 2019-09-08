@@ -30,7 +30,7 @@ namespace DoorBell {
     BodySensorComponentImpl(void)
 #endif
   {
-
+    count = 0;
   }
 
   void BodySensorComponentImpl ::
@@ -63,7 +63,17 @@ namespace DoorBell {
     if(val > 150)
     {
       ON_OFF_out(0, true);
+      count = 100;
     }
+    else if(count == 0)
+    {
+      ON_OFF_out(0,false);
+    }
+    else
+    {
+      count--;
+    }
+
   }
 
 } // end namespace DoorBell

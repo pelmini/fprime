@@ -60,6 +60,8 @@ namespace DoorBell {
           NATIVE_UINT_TYPE context /*!< The call order*/
       );
 
+      unsigned int count;
+
 
     };
 
