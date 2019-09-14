@@ -31,7 +31,7 @@ Svc::GroundInterfaceComponentImpl groundInterface("GIF");
 Arduino::LedBlinkerComponentImpl ledBlinker("Blinker");
 Arduino::HardwareRateDriver hardwareRateDriver("RateDr", 100);
 #ifdef COMM_SERIAL
-  Arduino::SerialDriverComponentImpl comm("COMM", 0);
+  Arduino::SerialDriverComponentImpl comm("COMM", 1);
 #else
   Arduino::RadioWrapperComponentImpl comm("COMM");
 #endif
@@ -92,11 +92,9 @@ void constructApp() {
     cmdDisp.start(0, 101, 10 * 1024);
     eventLogger.start(0, 98, 10 * 1024);
     chanTlm.start(0, 97, 10 * 1024);
-    Os::Log::logMsg("[SETUP] Lanuching rate groups\n", 0, 0, 0, 0, 0, 0);
+    Fw::Logger::logMsg("[SETUP] Lanuching rate groups\n", 0, 0, 0, 0, 0, 0);
     // Start the task for the rate group
-    printf("Something\n\n");
     taskRunner.run();
-    printf("Something else\n\n");
 }
 /**
  * Exit Tasks:

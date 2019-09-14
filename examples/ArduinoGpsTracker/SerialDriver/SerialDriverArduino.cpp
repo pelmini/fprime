@@ -47,7 +47,7 @@ namespace Arduino {
         Fw::Buffer &fwBuffer
     )
   {
-      Serial.write(reinterpret_cast<U8*>(fwBuffer.getdata()),fwBuffer.getsize());
+      reinterpret_cast<HardwareSerial*>(m_port_pointer)->write(reinterpret_cast<U8*>(fwBuffer.getdata()),fwBuffer.getsize());
   }
 
   void SerialDriverComponentImpl ::

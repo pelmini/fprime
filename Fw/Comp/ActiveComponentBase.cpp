@@ -68,12 +68,11 @@ namespace Fw {
 // If running with the baremetal scheduler, use a variant of the task-loop that
 // does not loop internal, but waits for an external eiteration call.
 #if FW_BAREMETAL_SCHEDULER == 1
-        Os::Task::TaskStatus status = this->m_task.start(taskName, identifier, priority, stackSize, this->s_baseBareTask, this);
+        Os::Task::TaskStatus status = this->m_task.start(taskName, identifier, priority, stackSize, this->s_baseBareTask, this, cpuAffinity);
 #else
-    	Os::Task::TaskStatus status = this->m_task.start(taskName, identifier, priority, stackSize, this->s_baseTask,
-                        this, cpuAffinity);
+    	Os::Task::TaskStatus status = this->m_task.start(taskName, identifier, priority, stackSize, this->s_baseTask, this, cpuAffinity);
 #endif
-       FW_ASSERT(status == Os::Task::TASK_OK,(NATIVE_INT_TYPE)status);
+        FW_ASSERT(status == Os::Task::TASK_OK,(NATIVE_INT_TYPE)status);
     }
 
     void ActiveComponentBase::exit(void) {
