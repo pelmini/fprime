@@ -8,7 +8,7 @@
 #include <examples/ArduinoGpsTracker/LedBlinker/LedBlinker.hpp>
 #include "Fw/Types/BasicTypes.hpp"
 
-#define LED_PIN 16
+#define LED_PIN 13
 namespace Arduino {
 
   // ----------------------------------------------------------------------

@@ -7,15 +7,25 @@
 #else
     #include <examples/ArduinoGpsTracker/SerialDriver/SerialDriver.hpp>
 #endif
+
+// Global handlers for this Topology
 Fw::LogAssertHook assert;
+Os::Log logger;
+
+#define STARTUP_DELAY_MS 2000
+
 /**
  * Main function.
  */
 int main(int argc, char* argv[]) {
 	assert.registerHook();
 #ifdef ARDUINO
-    Serial1.begin(115200);
-    Os::setArduinoStreamLogHandler(&Serial1);
+    // Start Serial for logging, and give logger time to connect
+    Serial.begin(9600);
+    delay(STARTUP_DELAY_MS);
+    // Setup log handler
+    Os::setArduinoStreamLogHandler(&Serial);
+    Fw::Logger::registerLogger(&logger);
 #else
     // Set serial port
     FW_ASSERT(argc <= 2);
@@ -23,7 +33,7 @@ int main(int argc, char* argv[]) {
         Arduino::SERIAL_PORT = reinterpret_cast<char**>(&argv[1]);
     }
 #endif
-    Os::Log::logMsg("[SETUP] Constructing system\n", 0, 0, 0, 0, 0, 0);
+    Fw::Logger::logMsg("[SETUP] Constructing system\n", 0, 0, 0, 0, 0, 0);
     constructApp();
 #ifndef ARDUINO
     while (1) {}
