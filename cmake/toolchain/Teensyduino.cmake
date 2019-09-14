@@ -9,13 +9,13 @@
 set(CMAKE_SYSTEM_NAME Teensyduino)
 set(CMAKE_SYSTEM_PROCESSOR arm)
 set(CMAKE_CROSSCOMPILING 1)
+set(CMAKE_C_COMPILER_WORKS 1)
+set(CMAKE_CXX_COMPILER_WORKS 1)
+set(CMAKE_ASM_COMPILER_WORKS 1)
 set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY" CACHE STRING "Try Static Lib Type" FORCE)
 
 # Check if ARDUINO_SDK_PATH is set, otherwise set it to /opt/arduino-1.8.9/
-if (NOT DEFINED ARDUINO_SDK_PATH)
-    set(ARDUINO_SDK_PATH "/opt/arduino-1.8.9")
-endif()
-
+SET(ARDUINO_SDK_PATH "/opt/arduino-1.8.9" CACHE PATH "Path to Arduino SDK")
 SET(TEENSY_VERSION "teensy32" CACHE STRING "Version of TEENSY to use")
 string(REGEX MATCH "teensy[0-9]" TEENSY_CORE_DIR "${TEENSY_VERSION}")
 include("${CMAKE_CURRENT_LIST_DIR}/ArduinoSupport/${TEENSY_VERSION}.cmake")
@@ -69,13 +69,10 @@ set(CMAKE_CXX_COMPILE_OBJECT "${CMAKE_CXX_COMPILER} -c <SOURCE> -o <OBJECT> <FLA
 set(CMAKE_ASM_COMPILE_OBJECT "${CMAKE_ASM_COMPILER} -c <SOURCE> -o <OBJECT> <FLAGS> <INCLUDES>" CACHE STRING "ASM to o")
 set(CMAKE_C_COMPILE_OBJECT   "${CMAKE_C_COMPILER}   -c <SOURCE> -o <OBJECT> <FLAGS> <INCLUDES>" CACHE STRING "C to o")
 
-# Build the Arduino core library for Teensy
-if (NOT TARGET "teensycore")
-    # Glob up all the files, excluding "main.cpp"
-    file(GLOB ARDUINO_SRC "${TEENSY_SRC_DIR}/*.cpp" "${TEENSY_SRC_DIR}/*.c" "${TEENSY_SRC_DIR}/*.S")
-    add_library("teensycore" ${ARDUINO_SRC} ${TEENSY_SHIM_SOURCES})
-    target_link_libraries("teensycore" "m" "stdc++" ${TEENSY_LIBS})
-    target_include_directories("teensycore" PUBLIC ${TEENSY_SRC_DIR})
+# Glob up all the files for the Arduino lib build
+file(GLOB ARDUINO_SRC "${TEENSY_SRC_DIR}/*.cpp" "${TEENSY_SRC_DIR}/*.c" "${TEENSY_SRC_DIR}/*.S")
+if (NOT ARDUINO_SRC STREQUAL "")
+    set(TEENSY_ARDUINO_SRC ${ARDUINO_SRC} CACHE STRING "Teensy's Arduino Sources")
 endif()
 ####
 # add_arduino_dependency:
@@ -86,6 +83,14 @@ endif()
 # @param target: target project used to identify the output executable
 ####
 function(add_arduino_dependency target)
+    # Build the Arduino core library for Teensy
+    if (NOT TARGET "teensycore")
+        add_library("teensycore" ${ARDUINO_SRC} ${TEENSY_SHIM_SOURCES})
+        target_link_libraries("teensycore" "m" "stdc++" ${TEENSY_LIBS})
+        target_include_directories("teensycore" PUBLIC ${TEENSY_SRC_DIR})
+    endif()
+
+
     # Add a dependency on the teensycore (Arduino framework build) to the target
     add_dependencies(${target} "teensycore")
     target_link_libraries(${target} "teensycore" "m" "stdc++")

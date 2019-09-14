@@ -28,9 +28,9 @@ set(BAREMETAL_SCHEDULER CACHE BOOL ON "Uses the baremtal scheduler")
 # components will be placed in the F-Prime binary subdirectory to keep them from
 # colliding with deployment specific items.
 ##
-include("${CMAKE_CURRENT_LIST_DIR}/../../cmake/FPrime.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime.cmake")
 # NOTE: register custom targets between these two lines
-include("${CMAKE_CURRENT_LIST_DIR}/../../cmake/FPrime-Code.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/../cmake/FPrime-Code.cmake")
 # Note: when building a deployment outside of the F´ core directories, then the
 # build root must be re-mapped for use with the standard build system components.
 #
@@ -49,9 +49,9 @@ include("${CMAKE_CURRENT_LIST_DIR}/../../cmake/FPrime-Code.cmake")
 # core components in the topology, which is also added here.
 ##
 # Add component subdirectories
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/../ArduinoGpsTracker/SerialDriver/")
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/../ArduinoGpsTracker/HardwareRateDriver/")
-add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/../ArduinoGpsTracker/LedBlinker/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/../examples/ArduinoGpsTracker/SerialDriver/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/../examples/ArduinoGpsTracker/HardwareRateDriver/")
+add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/../examples/ArduinoGpsTracker/LedBlinker/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/BodySensor/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/LEDPower/")
 add_fprime_subdirectory("${CMAKE_CURRENT_LIST_DIR}/Light/")
