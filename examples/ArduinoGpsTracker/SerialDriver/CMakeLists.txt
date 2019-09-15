@@ -10,7 +10,7 @@ set(SOURCE_FILES
   "${CMAKE_CURRENT_LIST_DIR}/SerialDriver.cpp"
 )
 # Check the Linux build
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+if(NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Teensyduino")
     list(APPEND SOURCE_FILES "${CMAKE_CURRENT_LIST_DIR}/SerialDriverLinux.cpp")
 # Teensyduino additions
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Teensyduino")
