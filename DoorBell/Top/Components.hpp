@@ -26,6 +26,8 @@ void constructApp();
 #include <examples/ArduinoGpsTracker/LedBlinker/LedBlinker.hpp>
 #include <examples/ArduinoGpsTracker/HardwareRateDriver/HardwareRateDriver.hpp>
 #include <examples/ArduinoGpsTracker/SerialDriver/SerialDriver.hpp>
+#include <DoorBell/BodySensor/BodySensorComponentImpl.hpp>
+#include <DoorBell/Light/LightComponentImpl.hpp>
 
 //Core components. Gotta run them all
 extern Svc::RateGroupDriverImpl rateGroupDriverComp;
@@ -43,6 +45,9 @@ extern Svc::FatalHandlerComponentImpl fatalHandler;
 extern Svc::HealthImpl health;
 extern Arduino::LedBlinkerComponentImpl ledBlinker;
 extern Arduino::HardwareRateDriver hardwareRateDriver;
+extern DoorBell::BodySensorComponentImpl bodySensor;
+extern DoorBell::LightComponentImpl light;
+
 #ifdef COMM_SERIAL
   extern Arduino::SerialDriverComponentImpl comm;
 #endif

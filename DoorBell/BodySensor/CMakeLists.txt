@@ -7,6 +7,7 @@
 ####
 set(SOURCE_FILES
         "${CMAKE_CURRENT_LIST_DIR}/BodySensorComponentAi.xml"
+        "${CMAKE_CURRENT_LIST_DIR}/BodySensorComponentImpl.cpp"
         )
 register_fprime_module()
 # Add Teensyduino dependency

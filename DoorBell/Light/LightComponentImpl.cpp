@@ -10,7 +10,7 @@
 //
 // ======================================================================
 
-#include <Arudino.h>
+//#include <Arduino.h>
 #include <DoorBell/Light/LightComponentImpl.hpp>
 #include "Fw/Types/BasicTypes.hpp"
 
@@ -39,7 +39,7 @@ namespace DoorBell {
     )
   {
     LightComponentBase::init(instance);
-    pinMode(6, OUTPUT);
+   // pinMode(6, OUTPUT);
   }
 
   LightComponentImpl ::
@@ -53,18 +53,21 @@ namespace DoorBell {
   // ----------------------------------------------------------------------
 
   void LightComponentImpl ::
-    ON_OFF_handler(
+    ON_OFF_handler
+    (
         const NATIVE_INT_TYPE portNum,
         bool TurnOn
-    )
-  { if(TurnOn)
-    {
-      digitalWrite(6, HIGH);
-    }
-    else
-    {
-      digitalWrite(6, LOW);
-    }
+        )
+  {
+    printf("light is %s\n", TurnOn?"ON":"OFF");
+//  if(TurnOn)
+//  {
+//     digitalWrite(6, HIGH);
+//  }
+//  else
+//  {
+//    digitalWrite(6, LOW);
+//  }
 
   }
 

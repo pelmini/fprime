@@ -30,8 +30,13 @@ Svc::GroundInterfaceComponentImpl groundInterface("GIF");
 // Arduino specific components
 Arduino::LedBlinkerComponentImpl ledBlinker("Blinker");
 Arduino::HardwareRateDriver hardwareRateDriver("RateDr", 100);
+
+//Doorbell specfic components
+DoorBell::BodySensorComponentImpl bodySensor("body");
+DoorBell::LightComponentImpl light("light");
+
 #ifdef COMM_SERIAL
-  Arduino::SerialDriverComponentImpl comm("COMM", 0);
+  Arduino::SerialDriverComponentImpl comm("COMM", 1);
 #else
   Arduino::RadioWrapperComponentImpl comm("COMM");
 #endif
@@ -60,6 +65,8 @@ void constructApp() {
     health.init(25,0);
     groundInterface.init(0);
     ledBlinker.init(0);
+    bodySensor.init(0);
+    light.init(0);
 #ifdef COMM_SERIAL
     comm.init(0, 115200);
 #else
@@ -92,11 +99,9 @@ void constructApp() {
     cmdDisp.start(0, 101, 10 * 1024);
     eventLogger.start(0, 98, 10 * 1024);
     chanTlm.start(0, 97, 10 * 1024);
-    Os::Log::logMsg("[SETUP] Lanuching rate groups\n", 0, 0, 0, 0, 0, 0);
+    Fw::Logger::logMsg("[SETUP] Lanuching rate groups\n", 0, 0, 0, 0, 0, 0);
     // Start the task for the rate group
-    printf("Something\n\n");
     taskRunner.run();
-    printf("Something else\n\n");
 }
 /**
  * Exit Tasks:

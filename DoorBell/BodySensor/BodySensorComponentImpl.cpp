@@ -13,6 +13,7 @@
 
 #include <DoorBell/BodySensor/BodySensorComponentImpl.hpp>
 #include "Fw/Types/BasicTypes.hpp"
+//#include <Arduino.h>
 
 namespace DoorBell {
 
@@ -57,13 +58,14 @@ namespace DoorBell {
         NATIVE_UINT_TYPE context
     )
   {
+    printf("I am here\n");
     int val = 0;
-    val = analogRead(A6);
+    val = 200; //analogRead(A6);
 
     if(val > 150)
     {
       ON_OFF_out(0, true);
-      count = 100;
+      count = 30;
     }
     else if(count == 0)
     {
