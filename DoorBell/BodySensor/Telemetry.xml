@@ -8,22 +8,11 @@
 ======================================================================-->
 
 <telemetry>
-
   <channel
     id="0"
-    name="BodySensor_RawData"
-    data_type="U16"
-    abbrev="BSR-0000"
-  >
-    <comment>Current distance of person</comment>
-  </channel>
-
-  <channel
-    id="1"
     name="BodySensor_Counter"
     data_type="U32"
-    abbrev="BSR-0001"
-  >
+    abbrev="BSR-0000">
     <comment>Number of people that went into Micheal's office</comment>
   </channel>
 

@@ -13,7 +13,7 @@
 
 #include <DoorBell/BodySensor/BodySensorComponentImpl.hpp>
 #include "Fw/Types/BasicTypes.hpp"
-//#include <Arduino.h>
+#include <Arduino.h>
 
 namespace DoorBell {
 
@@ -32,6 +32,7 @@ namespace DoorBell {
 #endif
   {
     count = 0;
+    bodyCount = 0;
   }
 
   void BodySensorComponentImpl ::
@@ -45,7 +46,6 @@ namespace DoorBell {
   BodySensorComponentImpl ::
     ~BodySensorComponentImpl(void)
   {
-
   }
 
   // ----------------------------------------------------------------------
@@ -58,24 +58,34 @@ namespace DoorBell {
         NATIVE_UINT_TYPE context
     )
   {
-    printf("I am here\n");
     int val = 0;
-    val = 200; //analogRead(A6);
+    val = analogRead(A6);
 
-    if(val > 150)
+    if(val > 150 && count == 0)
     {
+      log_ACTIVITY_HI_BodySensor_ON();
       ON_OFF_out(0, true);
       count = 30;
     }
+    else if(count == 1)
+    {
+      log_ACTIVITY_HI_BodySensor_OFF();
+      ON_OFF_out(0,false);
+      bodyCount++;
+      tlmWrite_BodySensor_Counter(bodyCount);
+      count--;
+    }
+    /*
+     * Stop condition
+     * */
     else if(count == 0)
     {
-      ON_OFF_out(0,false);
+      count = 0;
     }
     else
     {
       count--;
     }
-
   }
 
 } // end namespace DoorBell

@@ -36,7 +36,7 @@ DoorBell::BodySensorComponentImpl bodySensor("body");
 DoorBell::LightComponentImpl light("light");
 
 #ifdef COMM_SERIAL
-  Arduino::SerialDriverComponentImpl comm("COMM", 1);
+  Arduino::SerialDriverComponentImpl comm("COMM", 0);
 #else
   Arduino::RadioWrapperComponentImpl comm("COMM");
 #endif
@@ -60,9 +60,9 @@ void constructApp() {
 
     // Initialize the core data handling components
     eventLogger.init(10, 0);
-    chanTlm.init(20, 0);
+    chanTlm.init(10, 0);
     cmdDisp.init(10,0);
-    health.init(25,0);
+    health.init(10,0);
     groundInterface.init(0);
     ledBlinker.init(0);
     bodySensor.init(0);

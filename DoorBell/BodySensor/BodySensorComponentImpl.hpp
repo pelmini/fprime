@@ -61,6 +61,7 @@ namespace DoorBell {
       );
 
       unsigned int count;
+      unsigned int bodyCount;
 
 
     };

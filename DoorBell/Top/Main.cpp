@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
     Serial.begin(9600);
     delay(STARTUP_DELAY_MS);
     // Setup log handler
-    Os::setArduinoStreamLogHandler(&Serial);
+    Os::setArduinoStreamLogHandler(&Serial1);
     Fw::Logger::registerLogger(&logger);
 #else
     // Set serial port
